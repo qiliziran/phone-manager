@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center_vertical" >
+
+    <!-- android:scaleType="fitXY"把图片按照指定的大小在View中显示，
+    拉伸显示图片，不保持原比例，填满View. -->
+    <ImageView
+        android:id="@+id/iv_app_manager_icon"
+        android:layout_width="60dip"
+        android:layout_height="60dip"
+        android:scaleType="fitXY"
+        android:contentDescription="HELLO"/>
+    <TextView
+        android:id="@+id/tv_app_manager_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip"
+        android:textSize="21sp"
+        android:textColor="#ff000000"/>
+    <ImageView
+        android:id="@+id/iv_app_lock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:scaleType="fitXY"
+        android:src="@drawable/img05"
+        android:contentDescription="hello_world"/>
+</LinearLayout>

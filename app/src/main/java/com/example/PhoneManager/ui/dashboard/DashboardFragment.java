@@ -1,5 +1,6 @@
 package com.example.PhoneManager.ui.dashboard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,11 @@ public class DashboardFragment extends Fragment {
                 dbHelper.getWritableDatabase();
             }
         });
+
+//        Intent intent= new Intent();
+//        intent.setClass(getContext(), WaveProgressActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        getContext().startActivity(intent);
 
         return root;
     }

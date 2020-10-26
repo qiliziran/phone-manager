@@ -44,11 +44,16 @@ public class FeaturesAdapter extends RecyclerView.Adapter<FeaturesAdapter.ViewHo
             @Override
             public void onClick(View v) {
                 int position = holder.getAdapterPosition();
-                Features features = mFeaturesList.get(position);
-                Intent intent= new Intent();
-                intent.setClass(mContext, ApplicationListActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mContext.startActivity(intent);
+
+                switch (position) {
+                    case 0:
+                        Intent intent= new Intent();
+                        intent.setClass(mContext, ApplicationListActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        mContext.startActivity(intent);
+                        break;
+                }
+
             }
         });
         return holder;

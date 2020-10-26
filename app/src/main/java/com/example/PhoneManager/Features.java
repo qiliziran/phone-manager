@@ -1,4 +1,4 @@
-package com.example.myapplication02;
+package com.example.PhoneManager;
 
 public class Features {
     private String name;

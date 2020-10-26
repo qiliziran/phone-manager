@@ -1,4 +1,4 @@
-package com.example.myapplication02;
+package com.example.PhoneManager;
 
 import android.graphics.drawable.Drawable;
 
@@ -8,6 +8,8 @@ public class AppInfo {
     private String packageName;
     private boolean isSystemApp;
     private long codesize;
+    private String versionName;
+
     public long getCodesize() {
         return codesize;
     }
@@ -37,6 +39,12 @@ public class AppInfo {
     }
     public void setSystemApp(boolean isSystemApp) {
         this.isSystemApp = isSystemApp;
+    }
+    public String getVersionName() {
+        return versionName;
+    }
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
     }
 
 }

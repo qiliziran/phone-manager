@@ -1,4 +1,4 @@
-package com.example.myapplication02.ui.notifications;
+package com.example.PhoneManager.ui.notifications;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

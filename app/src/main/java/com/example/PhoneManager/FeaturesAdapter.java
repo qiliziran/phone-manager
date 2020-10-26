@@ -1,4 +1,4 @@
-package com.example.myapplication02;
+package com.example.PhoneManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.example.myapplication02.ui.home.HomeFragment;
 
 import java.util.List;
 

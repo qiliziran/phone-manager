@@ -1,28 +1,13 @@
-package com.example.myapplication02;
+package com.example.PhoneManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.os.Bundle;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.List;
 //import com.example.appmanager.R;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 
 public class ApplicationListActivity extends AppCompatActivity {
     private List<AppInfo> appInfoList = new ArrayList<>();

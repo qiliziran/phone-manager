@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.PhoneManager.BatteryActivity">
+
+    <eo.view.batterymeter.BatteryMeterView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:batteryMeterChargeLevel="80"
+        app:batteryMeterChargingColor="#4caf50"
+        app:batteryMeterColor="#0277bd"
+        app:batteryMeterCriticalChargeLevel="15"
+        app:batteryMeterCriticalColor="#d84315"
+        app:batteryMeterIndicatorColor="@android:color/transparent"
+        app:batteryMeterIsCharging="true"
+        app:batteryMeterTheme="rounded"
+        app:batteryMeterUnknownColor="#e0e0e0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

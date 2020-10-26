@@ -1,4 +1,4 @@
-package com.example.myapplication02;
+package com.example.PhoneManager;
 
 
 import java.util.ArrayList;
@@ -33,6 +33,7 @@ public class AppInfoProvider {
             myAppInfo = new AppInfo();
             //拿到包名
             String packageName = info.packageName;
+            String versionName = info.versionName;
             //拿到应用程序的信息
             ApplicationInfo appInfo = info.applicationInfo;
             //拿到应用程序的图标
@@ -44,6 +45,7 @@ public class AppInfoProvider {
             String appName = appInfo.loadLabel(packageManager).toString();
 
             myAppInfo.setPackageName(packageName);
+            myAppInfo.setVersionName(versionName);
             myAppInfo.setAppName(appName);
             myAppInfo.setIcon(icon);
 

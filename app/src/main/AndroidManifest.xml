@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.myapplication02">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.PhoneManager">
+
+    <uses-permission
+        android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:allowBackup="true"
@@ -9,12 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".TestActivity">
-        </activity>
-
-        <activity android:name=".ApplicationListActivity">
-
-        </activity>
+        <activity android:name=".BatteryActivity"></activity>
+        <activity android:name=".TestActivity"></activity>
+        <activity android:name=".ApplicationListActivity"></activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">

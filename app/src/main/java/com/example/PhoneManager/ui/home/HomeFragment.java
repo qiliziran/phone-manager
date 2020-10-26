@@ -1,24 +1,19 @@
-package com.example.myapplication02.ui.home;
+package com.example.PhoneManager.ui.home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.example.myapplication02.Features;
-import com.example.myapplication02.FeaturesAdapter;
-import com.example.myapplication02.R;
+import com.example.PhoneManager.Features;
+import com.example.PhoneManager.FeaturesAdapter;
+import com.example.PhoneManager.R;
 
 import java.util.ArrayList;
 import java.util.List;

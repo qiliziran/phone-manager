@@ -1,9 +1,8 @@
-package com.example.myapplication02;
+package com.example.PhoneManager;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
@@ -34,6 +32,8 @@ public class AppInfoAdapter extends ArrayAdapter<AppInfo> {
             viewHolder = new ViewHolder();
             viewHolder.appInfoImage = view.findViewById(R.id.app_info_image);
             viewHolder.appInfoName = view.findViewById(R.id.app_info_name);
+            viewHolder.appInfoVersion = view.findViewById(R.id.app_info_version);
+
             view.setTag(viewHolder);
 
         } else {
@@ -43,12 +43,14 @@ public class AppInfoAdapter extends ArrayAdapter<AppInfo> {
         Bitmap bm = getBitmapFromDrawable(appInfo.getIcon());
         viewHolder.appInfoImage.setImageBitmap(bm);
         viewHolder.appInfoName.setText(appInfo.getAppName());
+        viewHolder.appInfoVersion.setText("版本：" + appInfo.getVersionName());
         return view;
     }
 
     class ViewHolder {
         ImageView appInfoImage;
         TextView appInfoName;
+        TextView appInfoVersion;
     }
 
     static private Bitmap getBitmapFromDrawable(@NonNull Drawable drawable) {

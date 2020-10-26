@@ -3,20 +3,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.PhoneManager">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
     <application
+        android:name="org.litepal.LitePalApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".BatteryActivity"></activity>
-        <activity android:name=".TestActivity"></activity>
-        <activity android:name=".ApplicationListActivity"></activity>
+        <activity android:name=".tt.ttActivity"></activity>
+        <activity android:name=".BatteryActivity" />
+        <activity android:name=".TestActivity" />
+        <activity android:name=".ApplicationListActivity" />
+
+        <service
+            android:name=".Service.GetUserDataService"
+            android:enabled="true"
+            android:exported="true" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name">

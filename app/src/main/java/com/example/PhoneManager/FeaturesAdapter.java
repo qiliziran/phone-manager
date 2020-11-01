@@ -35,7 +35,9 @@ public class FeaturesAdapter extends RecyclerView.Adapter<FeaturesAdapter.ViewHo
         this.mContext = context;
     }
 
-
+    /*
+    创建ViewHolder
+     */
     @Override
     public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
         View view = LayoutInflater.from((parent.getContext())).inflate(R.layout.features_item, parent, false);
@@ -58,14 +60,18 @@ public class FeaturesAdapter extends RecyclerView.Adapter<FeaturesAdapter.ViewHo
         });
         return holder;
     }
-
+    /*
+    传入ViewHolder及其位置，Adapter会找到目标位置的数据并将其绑定到ViewHolder的视图上。
+     */
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Features features = mFeaturesList.get((position));
         holder.featuresImage.setImageResource(features.getImageId());
         holder.featuresName.setText(features.getName());
     }
-
+    /*
+    RecyclerView询问数组列表中包含多少个待展示的视图。
+     */
     @Override
     public int getItemCount() {
         return mFeaturesList.size();

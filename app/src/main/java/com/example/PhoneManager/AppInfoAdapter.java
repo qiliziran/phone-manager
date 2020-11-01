@@ -53,7 +53,7 @@ public class AppInfoAdapter extends ArrayAdapter<AppInfo> {
         TextView appInfoVersion;
     }
 
-    static private Bitmap getBitmapFromDrawable(@NonNull Drawable drawable) {
+    static public Bitmap getBitmapFromDrawable(@NonNull Drawable drawable) {
         // 部分应用没有图标，会返回AdaptiveiconDrawable，用这种方式也能转换为Bitmap
         final Bitmap bmp = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(bmp);

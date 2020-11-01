@@ -1,9 +1,13 @@
 package com.example.PhoneManager.ui.home;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -11,15 +15,22 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.PhoneManager.AppInfo;
+import com.example.PhoneManager.AppInfoProvider;
 import com.example.PhoneManager.Features;
 import com.example.PhoneManager.FeaturesAdapter;
 import com.example.PhoneManager.R;
 
+import com.example.PhoneManager.AppInfoAdapter;
+import com.example.PhoneManager.Splash;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment {
+import static com.example.PhoneManager.AppInfoAdapter.getBitmapFromDrawable;
 
+public class HomeFragment extends Fragment {
+    private Button btn_predict;
     private HomeViewModel homeViewModel;
     private List<Features> featuresList = new ArrayList<>();
 
@@ -35,10 +46,18 @@ public class HomeFragment extends Fragment {
 //                textView.setText(s);
 //            }
 //        });
+        //获取app的图标名称等数据，在该Fragment中展示
+        AppInfoProvider app = new AppInfoProvider(getContext());
+        List<AppInfo> appInfoList =  app.getAllApps();
+
+        Bitmap bitmap = getBitmapFromDrawable(appInfoList.get(0).getIcon());
+//        btn_predict = root.findViewById(R.id.btn_predict);
 
         initFeatures();
+        //加载布局
         View view = inflater.inflate(R.layout.fragment_home, container,false);
         RecyclerView recyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
+        //创建一个每行最多两个View的网格布局
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerView.setLayoutManager(gridLayoutManager);
         FeaturesAdapter adapter = new FeaturesAdapter(getContext(),featuresList);

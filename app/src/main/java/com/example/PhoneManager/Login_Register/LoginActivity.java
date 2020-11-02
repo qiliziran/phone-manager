@@ -3,6 +3,7 @@ package com.example.PhoneManager.Login_Register;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,10 +11,12 @@ import android.text.Selection;
 import android.text.Spannable;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -21,12 +24,14 @@ import com.example.PhoneManager.MainActivity;
 import com.example.PhoneManager.R;
 import com.example.PhoneManager.SetAppearence;
 import com.example.PhoneManager.ui.home.HomeFragment;
+import com.example.PhoneManager.ui.home.PredictActivity;
 import com.example.PhoneManager.utils.StatusBarUtil;
 
 import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText username, password;
+    private TextView register1;
     private ImageView visiable;
     private Button loginbtn;
     private boolean isvisiable = false;
@@ -40,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             StatusBarUtil.setStatusBarColor(LoginActivity.this, R.color.white);
         }
+        register1 =findViewById(R.id.register);
         //修改输入框中的图标属性
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
@@ -50,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
         visiable = findViewById(R.id.visiable);
 
         setListeners();
+
+
     }
 
     //监听器
@@ -57,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
         OnClick onClick = new OnClick();
         visiable.setOnClickListener(onClick);
         loginbtn.setOnClickListener(onClick);
+        register1.setOnClickListener(onClick);
     }
 
     private class OnClick implements View.OnClickListener {
@@ -84,10 +93,40 @@ public class LoginActivity extends AppCompatActivity {
                         break;
                     }
                     break;
-//                case R.id.loginbtn:
-//                    Intent intent = new Intent();
-//                    intent.setClass(LoginActivity.this, MainActivity.class);//this前面为当前activty名称，class前面为要跳转到得activity名称
-//                    startActivity(intent);
+                case R.id.loginbtn:
+                    //检测用户名密码
+                    SharedPreferences pref = getSharedPreferences("userdata",MODE_PRIVATE);
+                    String name = pref.getString("username","");
+                    String phone = pref.getString("phonenumber","");
+                    String pass = pref.getString("password","");
+                    Log.d("TAG", "获取到的用户名: " + name);
+                    Log.d("TAG", "获取到的手机号: " + phone);
+                    Log.d("TAG", "获取到的密码: " + pass);
+                    String usernametext = username.getText().toString();
+                    String passwordtext = password.getText().toString();
+//                    while (true){
+                        if(usernametext.equals(name)||usernametext.equals(phone)){
+                            if(passwordtext.equals(pass)){
+                                Toast.makeText(LoginActivity.this,"登录成功！",Toast.LENGTH_SHORT).show();
+                                Intent successintent = new Intent(LoginActivity.this, TestMainActivity.class);;//this前面为当前activty名称，class前面为要跳转到得activity名称
+                                startActivity(successintent);
+//                                break;
+                            }else{
+                                Toast.makeText(LoginActivity.this,"密码错误！",Toast.LENGTH_SHORT).show();
+                                password.setText("");
+                            }
+                        }else{
+                            Toast.makeText(LoginActivity.this,"用户不存在！",Toast.LENGTH_SHORT).show();
+                            username.setText("");
+                            password.setText("");
+                        }
+//                    }
+                    break;
+                case R.id.register:
+                    Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                    //this前面为当前activty名称，class前面为要跳转到得activity名称
+                    startActivity(intent);
+                    break;
             }
         }
     }

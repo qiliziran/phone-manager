@@ -4,10 +4,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white">
-<!--    欢迎加入、个性小机器人-->
+    <!--    欢迎加入、个性小机器人-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="150dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layout_marginTop="50dp">
@@ -17,7 +17,7 @@
             android:gravity="center_horizontal"
             android:layout_marginLeft="45dp"
             android:layout_marginTop="35dp"
-            android:text="欢迎回来！"
+            android:text="欢迎加入！"
             android:textSize="38dp"
             android:textColor="@color/schemeColor"
             android:textStyle="bold" />
@@ -26,22 +26,22 @@
             android:layout_height="150dp"
             android:src="@drawable/robot1"
             android:layout_marginLeft="65dp"
-            android:layout_marginBottom="45dp"
+            android:layout_marginBottom="25dp"
 
             />
     </LinearLayout>
-<!--    用户密码输入及登录按钮-->
+    <!--    用户密码输入及登录按钮-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="500dp"
         android:orientation="vertical"
         android:gravity="center_horizontal">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="400dp"
             android:gravity="center_horizontal"
             android:orientation="vertical">
-<!--            用户名-->
+            <!--            用户名-->
             <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="55dp"
@@ -64,7 +64,31 @@
                     android:layout_height="1dp"
                     android:background="@color/schemeColor"/>
             </LinearLayout>
-<!--            输入密码-->
+            <!--            手机号-->
+            <LinearLayout
+                android:layout_width="300dp"
+                android:layout_height="55dp"
+                android:orientation="vertical"
+                android:layout_marginTop="30dp">
+                <EditText
+                    android:id="@+id/phone"
+                    android:layout_width="300dp"
+                    android:layout_height="40dp"
+                    android:drawableLeft="@drawable/user"
+                    android:drawablePadding="10dp"
+                    android:textCursorDrawable="@drawable/textcursorcolor"
+                    android:theme="@style/MyEditText"
+                    android:background="@null"
+                    android:hint="@string/phone_hint"
+                    android:inputType="number"
+                    android:textColorHint="@color/schemeColor"
+                    />
+                <View
+                    android:layout_width="300dp"
+                    android:layout_height="1dp"
+                    android:background="@color/schemeColor"/>
+            </LinearLayout>
+            <!--            输入密码-->
             <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="55dp"
@@ -99,7 +123,42 @@
                     android:layout_height="1dp"
                     android:background="@color/schemeColor"/>
             </LinearLayout>
-<!--            注册跳转&登录按钮-->
+            <!--            确认密码-->
+            <LinearLayout
+                android:layout_width="300dp"
+                android:layout_height="55dp"
+                android:orientation="vertical"
+                android:layout_marginTop="20dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal">
+                    <EditText
+                        android:id="@+id/repassword"
+                        android:layout_width="245dp"
+                        android:layout_height="40dp"
+                        android:drawableLeft="@drawable/repassword"
+                        android:drawablePadding="10dp"
+                        android:inputType="textPassword"
+                        android:textCursorDrawable="@drawable/textcursorcolor"
+                        android:theme="@style/MyEditText"
+                        android:background="@null"
+                        android:hint="@string/repassword_hint"
+                        android:textColorHint="@color/schemeColor"/>
+                    <ImageView
+                        android:id="@+id/revisiable"
+                        android:layout_width="25dp"
+                        android:layout_height="30dp"
+                        android:layout_marginTop="7dp"
+                        android:layout_marginLeft="10dp"
+                        android:src="@drawable/pass_invisiable"/>
+                </LinearLayout>
+                <View
+                    android:layout_width="300dp"
+                    android:layout_height="1dp"
+                    android:background="@color/schemeColor"/>
+            </LinearLayout>
+            <!--            注册跳转&登录按钮-->
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="80dp"
@@ -113,25 +172,25 @@
                     android:layout_marginBottom="10dp"
                     android:orientation="horizontal"
                     android:layout_gravity="center">
-<!--                    第一次使用-->
+                    <!--                    第一次使用-->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
-                        android:text="第一次使用？"
+                        android:text="已有账号？"
                         android:textSize="13dp"
                         android:textColor="#9ba6a8"/>
-<!--                    注册-->
+                    <!--                    登录-->
                     <TextView
-                        android:id="@+id/register"
+                        android:id="@+id/login"
                         android:layout_width="wrap_content"
                         android:layout_height="30dp"
                         android:layout_marginLeft="2dp"
-                        android:text="注册"
+                        android:text="登录"
                         android:textSize="13dp"
                         android:textColor="@color/schemeColor"/>
                 </LinearLayout>
                 <Button
-                    android:id="@+id/loginbtn"
+                    android:id="@+id/registerbtn"
                     android:layout_width="100dp"
                     android:layout_height="40dp"
                     android:background="@drawable/loginbut"
@@ -139,7 +198,7 @@
                     android:drawableRight="@drawable/right"
                     android:paddingLeft="10dp"
                     android:drawablePadding="0dp"
-                    android:text="登录"
+                    android:text="注册"
                     android:textColor="@color/white"
                     android:textSize="16dp"/>
             </LinearLayout>
@@ -147,66 +206,13 @@
 
         </LinearLayout>
     </LinearLayout>
-<!--    底部布局-->
+    <!--    底部布局-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
         android:gravity="center_horizontal"
         android:orientation="vertical">
-<!--        第三方登录标题-->
-        <LinearLayout
-            android:layout_width="200dp"
-            android:layout_height="20dp"
-            android:orientation="horizontal"
-            android:gravity="center">
-            <View
-                android:layout_width="30dp"
-                android:layout_height="1dp"
-                android:layout_marginRight="10dp"
-                android:background="#9ba6a8"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="第三方登录"
-                android:textSize="14dp"
-                android:textColor="#9ba6a8"/>
-            <View
-                android:layout_width="30dp"
-                android:layout_height="1dp"
-                android:layout_marginLeft="10dp"
-                android:background="#9ba6a8"/>
-        </LinearLayout>
-<!--        微信、qq图标-->
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="70dp"
-            android:orientation="horizontal">
-            <LinearLayout
-                android:layout_width="46dp"
-                android:layout_height="46dp"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:background="@drawable/vxqqlogin">
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/vx"/>
-            </LinearLayout>
-            <View
-                android:layout_width="50dp"
-                android:layout_height="1dp"/>
-            <LinearLayout
-                android:layout_width="46dp"
-                android:layout_height="46dp"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:background="@drawable/vxqqlogin">
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/qq"/>
-            </LinearLayout>
-        </LinearLayout>
+
 
     </LinearLayout>
 </LinearLayout>

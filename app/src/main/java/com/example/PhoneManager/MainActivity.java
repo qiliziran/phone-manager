@@ -63,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
         //获取应用详细使用记录
-        long hour_in_mil = 1000*60*60*24; // In Milliseconds
-        long end_time = System.currentTimeMillis()-1000*60*60*24;
+        long hour_in_mil = 1000*60*2; // In Milliseconds
+        long end_time = System.currentTimeMillis();
         long start_time = end_time - hour_in_mil;
         //版本一
 //        UsageEvent UE = new UsageEvent(hour_in_mil,start_time,end_time);

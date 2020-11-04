@@ -71,7 +71,7 @@ public class GetUserDataService extends Service {
         Calendar calendar = Calendar.getInstance();
         long endTime = calendar.getTimeInMillis();
         // 一年前的今天
-        calendar.add(Calendar.DATE, -1);
+        calendar.add(Calendar.DATE, -3);
         long startTime = calendar.getTimeInMillis();
 
         Log.d(TAG, "Range start:" + dateFormat.format(startTime) );
@@ -96,12 +96,12 @@ public class GetUserDataService extends Service {
 //            Field field = list.get(i).getClass().getDeclaredField("mLaunchCount");
             uds.setTotalLaunchCount(usageStatsList.get(i).getClass().getDeclaredField("mLaunchCount").getInt(usageStatsList.get(i)));
             UserdataList.add(i,uds);
-            Log.d(TAG, "Pkg: " + uds.getAppName() +  "\t" + "ForegroundTime: "
-                    + uds.getTotalRunningTime()) ;
-            Log.d(TAG, "应用程序名: " +getApplicationNameByPackageName(context,uds.getAppName())) ;
+//            Log.d(TAG, "Pkg: " + uds.getAppName() +  "\t" + "ForegroundTime: "
+//                    + uds.getTotalRunningTime()) ;
+//            Log.d(TAG, "应用程序名: " +getApplicationNameByPackageName(context,uds.getAppName())) ;
 
         }
-        Log.d(TAG, "总个数: "+UserdataList.size());
+//        Log.d(TAG, "总个数: "+UserdataList.size());
         DataSupport.saveAll(UserdataList);
 
     }

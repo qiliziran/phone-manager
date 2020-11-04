@@ -22,12 +22,7 @@ import android.widget.Toast;
 
 import com.example.PhoneManager.MainActivity;
 import com.example.PhoneManager.R;
-import com.example.PhoneManager.SetAppearence;
-import com.example.PhoneManager.ui.home.HomeFragment;
-import com.example.PhoneManager.ui.home.PredictActivity;
 import com.example.PhoneManager.utils.StatusBarUtil;
-
-import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity {
     private EditText username, password;
@@ -96,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                 case R.id.loginbtn:
                     //检测用户名密码
                     SharedPreferences pref = getSharedPreferences("userdata",MODE_PRIVATE);
+                    SharedPreferences.Editor editer = getSharedPreferences("userdata", MODE_PRIVATE).edit();
                     String name = pref.getString("username","");
                     String phone = pref.getString("phonenumber","");
                     String pass = pref.getString("password","");
@@ -107,8 +103,10 @@ public class LoginActivity extends AppCompatActivity {
 //                    while (true){
                         if(usernametext.equals(name)||usernametext.equals(phone)){
                             if(passwordtext.equals(pass)){
+                                editer.putBoolean("loginstate",true);
+                                editer.apply();
                                 Toast.makeText(LoginActivity.this,"登录成功！",Toast.LENGTH_SHORT).show();
-                                Intent successintent = new Intent(LoginActivity.this, TestMainActivity.class);;//this前面为当前activty名称，class前面为要跳转到得activity名称
+                                Intent successintent = new Intent(LoginActivity.this, MainActivity.class);;//this前面为当前activty名称，class前面为要跳转到得activity名称
                                 startActivity(successintent);
 //                                break;
                             }else{

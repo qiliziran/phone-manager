@@ -21,7 +21,7 @@ public class UsageEvent {
     long end_time ;
     long start_time ;
     UsageEvents usageEvents;
-    public UsageEvent(long hour_in_mil, long end_time, long start_time) {
+    public UsageEvent(long hour_in_mil, long start_time, long end_time) {
         this.hour_in_mil = hour_in_mil;
         this.end_time = end_time;
         this.start_time = start_time;
@@ -38,7 +38,8 @@ public class UsageEvent {
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
    public void getUsageStatistics(Context context) {
-
+        Log.d(TAG, "getUsageStatistics: 正在获取最近一小时app使用情况。。。");
+        long count=0;
         UsageEvents.Event currentEvent;
 //        //  List<UsageEvents.Event> allEvents = new ArrayList<>();
 //        HashMap<String, AppUsageInfo> map = new HashMap<>();
@@ -51,7 +52,9 @@ public class UsageEvent {
             // Get all apps data from starting time to end time
             usageEvents = mUsageStatsManager.queryEvents(start_time, end_time);
         }
+
         while (usageEvents.hasNextEvent()){
+            count++;
             currentEvent = new UsageEvents.Event();
             usageEvents.getNextEvent(currentEvent);
             String date = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss").format(
@@ -61,7 +64,7 @@ public class UsageEvent {
                     +"事件对应APP： "+getApplicationNameByPackageName(context,currentEvent.getPackageName())+"\t"
                     +"事件开始的时间： "+date+"\t");
         }
-
+        Log.d(TAG, "事件总数： "+count);
     }
 
 }

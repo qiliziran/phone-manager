@@ -20,13 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-import com.example.PhoneManager.MainActivity;
 import com.example.PhoneManager.R;
-import com.example.PhoneManager.SetAppearence;
-import com.example.PhoneManager.ui.home.HomeFragment;
 import com.example.PhoneManager.utils.StatusBarUtil;
-
-import java.io.IOException;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText username, phone,password,repassword;
@@ -134,6 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
                     SharedPreferences.Editor editer = getSharedPreferences("userdata", MODE_PRIVATE).edit();
                     editer.putString("username", usernametext);
                     editer.putString("phonenumber", phonetext);
+                    editer.putBoolean("loginstate", false);
 //                    while (!confirmpassword){
                     String passwordtext = password.getText().toString();
                     String repasswordtext = repassword.getText().toString();

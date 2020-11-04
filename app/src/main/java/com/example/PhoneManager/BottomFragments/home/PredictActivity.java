@@ -1,4 +1,4 @@
-package com.example.PhoneManager.ui.home;
+package com.example.PhoneManager.BottomFragments.home;
 
 import androidx.appcompat.app.AppCompatActivity;
 

@@ -1,4 +1,4 @@
-package com.example.PhoneManager.ui.home;
+package com.example.PhoneManager.BottomFragments.home;
 
 import android.content.Context;
 import android.graphics.Canvas;

@@ -1,6 +1,8 @@
+/*
+ * 获取所有应用程序信息
+ * 主要依靠packageManager类
+ */
 package com.example.PhoneManager;
-
-
 import java.util.ArrayList;
 import java.util.List;
 

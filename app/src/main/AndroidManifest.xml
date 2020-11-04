@@ -16,39 +16,19 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme1">
-        <activity android:name=".Login_Register.QQloginActivity"
-            android:launchMode="singleTask"
-            android:noHistory="true" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="tencent1111089237" /> <!-- 开放平台获取的APPID -->
-            </intent-filter>
-        </activity>
+        android:theme="@style/AppTheme">
         <activity android:name=".Login_Register.TestMainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
-        <activity android:name=".Login_Register.RegisterActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".Login_Register.RegisterActivity"
+            android:theme="@style/AppTheme1">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
-        <activity android:name=".Login_Register.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".Login_Register.LoginActivity"
+            android:theme="@style/AppTheme1">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
-        <activity android:name=".ui.home.PredictActivity" />
+        <activity android:name=".BottomFragments.home.PredictActivity" />
         <activity android:name=".Splash" />
         <activity android:name=".BatteryActivity" />
         <activity android:name=".TestActivity" />

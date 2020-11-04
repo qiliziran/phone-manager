@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">记忆大师</string>
-    <string name="title_home">功能</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">首页</string>
+    <string name="title_dashboard">统计</string>
+    <string name="title_notifications">我的</string>
     <string name="title_activity_login">Login</string>
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>

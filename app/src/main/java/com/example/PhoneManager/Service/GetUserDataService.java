@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.example.PhoneManager.DataBase.UserData;
+import com.example.PhoneManager.GetData;
 
 import org.litepal.LitePal;
 import org.litepal.crud.DataSupport;
@@ -43,6 +44,7 @@ public class GetUserDataService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        //后台使用queryUsageStats获取app名、最后一次启动时间、总启动次数和总运行时间
         mUsmManager = getUsageStatsManager();
         try {
             printCurrentUsageStatus(this);
@@ -51,6 +53,15 @@ public class GetUserDataService extends Service {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
+
+        //后台使用UsageEvents获取app名、第一次运行时间，最后一次运行时间、总启动次数和总运行时间
+        //前2小时
+        GetData getdata = new GetData(this);
+        long end_time = System.currentTimeMillis();
+//        long start_time = end_time - hour_in_mil;
+        long start_time = end_time-1000*60*60*18;
+//        getdata.SaveToDatabase(start_time,end_time,this);
+
         Log.d(TAG, "后台获取数据成功！");
         return START_NOT_STICKY;
     }
@@ -92,8 +103,10 @@ public class GetUserDataService extends Service {
             uds.setAppName(getApplicationNameByPackageName(context, usageStatsList.get(i).getPackageName()));
             uds.setTotalRunningTime(usageStatsList.get(i).getTotalTimeInForeground());
             String t=format.format(new Date(usageStatsList.get(i).getLastTimeUsed()));
+            //设置最后一次运行时间
             uds.setLastRunningTime(t);
 //            Field field = list.get(i).getClass().getDeclaredField("mLaunchCount");
+            //设置总运行次数（关机后清零！）
             uds.setTotalLaunchCount(usageStatsList.get(i).getClass().getDeclaredField("mLaunchCount").getInt(usageStatsList.get(i)));
             UserdataList.add(i,uds);
 //            Log.d(TAG, "Pkg: " + uds.getAppName() +  "\t" + "ForegroundTime: "
@@ -117,7 +130,10 @@ public class GetUserDataService extends Service {
         UsageStatsManager usm = (UsageStatsManager) context.getSystemService("usagestats");
         return usm;
     }
-    //获取应用程序名
+    /**
+     * 根据包名获取应用程序名
+     * 参数：（上下文，包名）
+     */
     public static String getApplicationNameByPackageName(Context context, String packageName) {
 
         PackageManager pm = context.getPackageManager();

@@ -22,11 +22,11 @@ public class AppIconDataBase extends SQLiteOpenHelper {
     private Context mContext;
 
     //数据库名
-    private static final String DATABASE_NAME = "picture.db";
+    private static final String DATABASE_NAME = "AppIcons.db";
     //数据库版本号
     private static final int DATABASE_Version = 1;
     //表名
-    private static final String TABLE_NAME = "picture";
+    private static final String TABLE_NAME = "Appicon";
 
     //创建数据库
     public AppIconDataBase (Context context) {
@@ -36,10 +36,15 @@ public class AppIconDataBase extends SQLiteOpenHelper {
     //创建表并初始化表
     @Override
     public void onCreate (SQLiteDatabase db) {
-        String sql = "Create table " + TABLE_NAME + "(" + BaseColumns._ID
-                + " integer primary key autoincrement,"+ BaseColumns._ID
-                + " integer primary key autoincrement," + PictureColumns.PICTURE
-                + " blob not null);";
+//        String sql = "Create table " + TABLE_NAME + "("
+//                + "id integer primary key autoincrement,"+ BaseColumns._ID
+//                + " packagename varchar(20)," + PictureColumns.PICTURE
+//                + " blob not null);";
+        String sql = "create table "+TABLE_NAME+"(" +
+                //primary key 将id列设为主键    autoincrement表示id列是自增长的
+                "id integer primary key autoincrement," +
+                "packagename text," +
+                "appicon blob)";
         db.execSQL(sql);
 
         //初始化

@@ -3,17 +3,22 @@ package com.example.PhoneManager;
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.example.PhoneManager.DataBase.AppIconData;
+import com.example.PhoneManager.DataBase.AppIconDataBase;
 import com.example.PhoneManager.DataBase.AppUsageData;
 import com.example.PhoneManager.DataBase.UserData;
 
@@ -217,9 +222,9 @@ public class GetData {
 //                entry.getValue().appIcon=iconmap.get(entry.getKey()).getAppIcon();
 
                 float percentage = (float)(entry.getValue().timeInForeground*100/AllRunningTime);
-                Log.d("TAG", "app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
-                        +"app运行时间： "+percentage+"\t"
-                        +"app真运行时间： "+entry.getValue().timeInForeground);
+//                Log.d("TAG", "app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
+//                        +"app运行时间： "+percentage+"\t"
+//                        +"app真运行时间： "+entry.getValue().timeInForeground);
                 entry.getValue().setTimeInForegroundPercentage(percentage);
                 entry.getValue().setAppName(getApplicationNameByPackageName(context,entry.getKey()));
                 TopTopRunningTimePercentage += entry.getValue().timeInForegroundPercentage;
@@ -260,23 +265,45 @@ public class GetData {
         long start_time = getStartTime();
         int count = 0;
         List<AppIconData> AppIconDataList = DataSupport.findAll(AppIconData.class);
-        AppInfoProvider app = new AppInfoProvider(context);
-        HashMap<String, AppUsageInfo> iconmap = app.getAllAppUsage();
+        AppIconDataBase aid = new AppIconDataBase(context);
+        SQLiteDatabase sd = aid.getWritableDatabase();
+//        AppInfoProvider app = new AppInfoProvider(context);
+//        HashMap<String, AppUsageInfo> iconmap = app.getAllAppUsage(context);
+        HashMap<String, AppUsageInfo> iconmap = GetAppIcons();
+
         List<AppUsageInfo> LastestAppsList = new  ArrayList<AppUsageInfo>();
         HashMap<String, AppUsageInfo> map = getUsageStatistics(start_time,end_time,context);
+        //按照最后一次运行时间排序
         map = sortByLastRunningTime(map);
         for (Map.Entry<String, AppUsageInfo> entry : map.entrySet()) {
-            if(count<4){
+            //历史性BUG！！！iconmap.containsKey(entry.getKey())这句话用于判断最近的应用中没有图标的情况
+            if(count<4&&iconmap.containsKey(entry.getKey())){
                 //获取app图标
-                entry.getValue().appIcon=iconmap.get(entry.getKey()).getAppIcon();
-                Log.d("TAG", "app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
-                        +"app最后运行时间： "+LongToString_Time2(entry.getValue().LastRunningTime));
+//                String[] column = {"appicon"};//你要的数据
+//                String condition="packagename=?";
+//                String[] selectionArgs={entry.getKey()};//具体的条件,注意要对应条件字段
+//                Cursor cursor=sd.query("Appicon", column, condition,selectionArgs, null, null, null, null);
+//
+//                if (cursor.moveToFirst())
+//                {
+//                    byte[] b = cursor.getBlob(cursor.getColumnIndex("appicon"));
+//                    Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length, null);
+//                    entry.getValue().appIcon=bitmap;
+//                }
+//                cursor.close();
+
+                //将获取的数据转换成drawable
+                entry.getValue().appIcon=getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.launch_icon));
+//                entry.getValue().appIcon=iconmap.get(entry.getKey()).getAppIcon();
+//                Log.d("TAG", "app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
+//                        +"app最后运行时间： "+LongToString_Time2(entry.getValue().LastRunningTime)
+//                        +"app包名： "+entry.getValue().packageName);
                 entry.getValue().setAppName(getApplicationNameByPackageName(context,entry.getKey()));
                 LastestAppsList.add(entry.getValue());
+//                Log.d("TAG", "count: "+count);
                 count++;
-            }else{
-                break;
             }
+            if(count==4) break;
         }
         return LastestAppsList;
     }
@@ -352,22 +379,29 @@ public class GetData {
         sysapps.add("com.android.settings");
         sysapps.add("com.android.systemui");
         sysapps.add("com.lbe.security.miui");
+//        sysapps.add("com.miui.contentcatcher");
         return sysapps.contains(packname);
     }
 
-    /**
-     * 根据包名找app的图标
-     * @param AppIconDataList
-     * @param AppPackageName
-     * @return
-     */
-    public Bitmap FindAppIcon(List<AppIconData> AppIconDataList,String AppPackageName){
-        for(AppIconData ap:AppIconDataList){
-            if(ap.getAppPackageName().equals(AppPackageName)){
-                return ap.getAppIcon();
+    public HashMap<String, AppUsageInfo> GetAppIcons(){
+        HashMap<String, AppUsageInfo> appicons = new HashMap<>();
+        AppIconDataBase aid = new AppIconDataBase(context);
+        SQLiteDatabase sd = aid.getWritableDatabase();
+        Cursor c = sd.query("Appicon", null, null, null, null, null, null);
+        if(c != null && c.getCount() != 0) {
+            while(c.moveToNext()) {
+                //获取数据
+                String packagename = c.getString(c.getColumnIndex("packagename"));
+                if (appicons.get(packagename) == null) {
+                    appicons.put(packagename, new AppUsageInfo(packagename));
+                }
+                byte[] b = c.getBlob(c.getColumnIndex("appicon"));
+                //将获取的数据转换成drawable
+                Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length, null);
+                appicons.get(packagename).setAppIcon(bitmap);
             }
         }
-        return null;
+        return appicons;
     }
 
     /**

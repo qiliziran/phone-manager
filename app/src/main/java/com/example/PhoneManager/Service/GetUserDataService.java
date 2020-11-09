@@ -64,7 +64,8 @@ public class GetUserDataService extends Service {
         getdata.SaveToDatabase(start_time,end_time,this);
         //将获取app的图标存进数据库的功能封装成service
         AppInfoProvider app = new AppInfoProvider(this);
-        app.getAllAppUsage();
+        app.getAllAppUsage(this);
+
         Log.d(TAG, "后台获取数据成功！");
         return START_NOT_STICKY;
     }

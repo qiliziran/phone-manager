@@ -10,11 +10,14 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.PhoneManager.DataBase.AppIconData;
+import com.example.PhoneManager.DataBase.AppIconDataBase;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -87,8 +90,11 @@ public class AppInfoProvider {
      * 获取app包名、名称和图标的函数接口
      * 非系统应用程序
      */
-    public HashMap<String, AppUsageInfo> getAllAppUsage(){
-        DataSupport.deleteAll(AppIconData.class);
+    public HashMap<String, AppUsageInfo> getAllAppUsage(Context context){
+
+        AppIconDataBase aid = new AppIconDataBase(context);
+        SQLiteDatabase sd = aid.getWritableDatabase();
+
         List<AppIconData> AppIconDataList = new ArrayList<AppIconData>();
         HashMap<String, AppUsageInfo> map = new HashMap<>();
         //获取到所有安装了的应用程序的信息，包括那些卸载了的，但没有清除数据的应用程序
@@ -124,12 +130,11 @@ public class AppInfoProvider {
         int count=0;
         //输出使用情况：
         for (Map.Entry<String, AppUsageInfo> entry : map.entrySet()) {
-            AppIconData AppIcon = new AppIconData();
-            AppIcon.setAppName(getApplicationNameByPackageName(context,entry.getKey()));
-            AppIcon.setAppPackageName(entry.getValue().getPackageName());
-            AppIcon.setAppIcon(entry.getValue().getAppIcon());
-            AppIconDataList.add(count++,AppIcon);
-            DataSupport.saveAll(AppIconDataList);
+            ContentValues values = new ContentValues();
+            values.put("packagename",entry.getValue().getPackageName());
+            values.put("appicon",BitmapToByte(entry.getValue().getAppIcon()));
+            sd.insert("Appicon",null,values);
+            values.clear();
 //            Log.d("TAG", "app包名："+entry.getKey()+"\t"
 //                    +"app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
 //                    +"app启动次数： "+entry.getValue().launchCount+"\t"

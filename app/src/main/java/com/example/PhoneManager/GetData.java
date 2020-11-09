@@ -3,13 +3,17 @@ package com.example.PhoneManager;
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.example.PhoneManager.DataBase.AppIconData;
 import com.example.PhoneManager.DataBase.AppUsageData;
 import com.example.PhoneManager.DataBase.UserData;
 
@@ -42,6 +46,7 @@ public class GetData {
     }
 //    private  AppInfoProvider app = new AppInfoProvider(context);
 //    private  HashMap<String, AppUsageInfo> iconmap = app.getAllAppUsage();
+
     /**
      * 获取一定时间范围内的app使用信息
      * @param start_time
@@ -112,7 +117,9 @@ public class GetData {
                             map.get(E0.getPackageName()).LastRunningTime=E0.getTimeStamp();
                             map.get(E0.getPackageName()).LastRuntime =(int) (map.get(E0.getPackageName()).LastRunningTime%86400000);
                         }
-
+                        if(E0.getEventType() == UsageEvents.Event.ACTIVITY_PAUSED){
+                            map.get(E0.getPackageName()).LastBackTime=E0.getTimeStamp();
+                        }
                         if (E0.getEventType() == 1 && E1.getEventType() == 2) {
                             long diff = E1.getTimeStamp() - E0.getTimeStamp();
                             int Foregroundtime = (int)diff+map.get(E0.getPackageName()).timeInForeground.intValue();
@@ -192,26 +199,46 @@ public class GetData {
         long end_time = System.currentTimeMillis();
         long start_time = getStartTime();
         HashMap<String, AppUsageInfo> map =getUsageStatistics(start_time,end_time,context);
-        AppInfoProvider app = new AppInfoProvider(context);
-        HashMap<String, AppUsageInfo> iconmap = app.getAllAppUsage();
+//        AppInfoProvider app = new AppInfoProvider(context);
+//        HashMap<String, AppUsageInfo> iconmap = app.getAllAppUsage();
 
         //统计运行时间最长的前四个应用
-        long AllRunningTime=0;
+        long AllRunningTime = 0;
+//        long TopRunningTime = 0;
+        long TopTopRunningTimePercentage = 0;
         int count=0;
         List<AppUsageInfo> TopApps = new  ArrayList<AppUsageInfo>();
         for (Map.Entry<String, AppUsageInfo> entry : map.entrySet()) {
             AllRunningTime+=entry.getValue().timeInForeground;
+        }
+        for (Map.Entry<String, AppUsageInfo> entry : map.entrySet()) {
             if(count<4){
                 //获取app图标
-                entry.getValue().appIcon=iconmap.get(entry.getKey()).getAppIcon();
+//                entry.getValue().appIcon=iconmap.get(entry.getKey()).getAppIcon();
+
+                float percentage = (float)(entry.getValue().timeInForeground*100/AllRunningTime);
                 Log.d("TAG", "app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
-                        +"app运行时间： "+entry.getValue().timeInForeground);
-                TopApps.add(entry.getValue());
+                        +"app运行时间： "+percentage+"\t"
+                        +"app真运行时间： "+entry.getValue().timeInForeground);
+                entry.getValue().setTimeInForegroundPercentage(percentage);
+                entry.getValue().setAppName(getApplicationNameByPackageName(context,entry.getKey()));
+                TopTopRunningTimePercentage += entry.getValue().timeInForegroundPercentage;
+                if (entry.getValue().timeInForegroundPercentage!=0.0){
+                    TopApps.add(entry.getValue());
+                }
+
                 count++;
             }
         }
 
-
+        //将其他所有应用使用情况导入TopApps中
+        AppUsageInfo others = new AppUsageInfo("其他");
+        others.setAppName("其他");
+        others.setTimeInForegroundPercentage(100-TopTopRunningTimePercentage);
+        Log.d("TAG", "app名称："+others.appName+"\t"
+                +"app运行时间： "+others.timeInForegroundPercentage+"\t"
+                +"app运行时间： "+others.timeInForeground);
+        TopApps.add(others);
 //            //输出使用情况：
 //            for (Map.Entry<String, AppUsageInfo> entry : map.entrySet()) {
 //
@@ -228,10 +255,11 @@ public class GetData {
      * 记得对events进行倒序遍历！
      * @param context
      */
-    public void GetLastestApps(Context context){
+    public List<AppUsageInfo> GetLastestApps(Context context){
         long end_time = System.currentTimeMillis();
         long start_time = getStartTime();
         int count = 0;
+        List<AppIconData> AppIconDataList = DataSupport.findAll(AppIconData.class);
         AppInfoProvider app = new AppInfoProvider(context);
         HashMap<String, AppUsageInfo> iconmap = app.getAllAppUsage();
         List<AppUsageInfo> LastestAppsList = new  ArrayList<AppUsageInfo>();
@@ -242,13 +270,15 @@ public class GetData {
                 //获取app图标
                 entry.getValue().appIcon=iconmap.get(entry.getKey()).getAppIcon();
                 Log.d("TAG", "app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
-                        +"app运行时间： "+entry.getValue().timeInForeground);
+                        +"app最后运行时间： "+LongToString_Time2(entry.getValue().LastRunningTime));
+                entry.getValue().setAppName(getApplicationNameByPackageName(context,entry.getKey()));
                 LastestAppsList.add(entry.getValue());
                 count++;
             }else{
                 break;
             }
         }
+        return LastestAppsList;
     }
     /**
      * HashMap按总运行时间降序排序
@@ -320,7 +350,24 @@ public class GetData {
         sysapps.add("com.miui.securitycenter");
         sysapps.add("com.miui.home");
         sysapps.add("com.android.settings");
+        sysapps.add("com.android.systemui");
+        sysapps.add("com.lbe.security.miui");
         return sysapps.contains(packname);
+    }
+
+    /**
+     * 根据包名找app的图标
+     * @param AppIconDataList
+     * @param AppPackageName
+     * @return
+     */
+    public Bitmap FindAppIcon(List<AppIconData> AppIconDataList,String AppPackageName){
+        for(AppIconData ap:AppIconDataList){
+            if(ap.getAppPackageName().equals(AppPackageName)){
+                return ap.getAppIcon();
+            }
+        }
+        return null;
     }
 
     /**
@@ -351,11 +398,35 @@ public class GetData {
     /**
      *long类型时间--> xxxx年-xx月-xx日 时：分：秒 类型时间
      */
-    public static String LongToString_Time(long l){
+    public  String LongToString_Time1(long l){
         Date date = new Date(l);
-        SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
         String time=sim.format(date);
         return time;
+    }
+
+    /**
+     *long类型时间-->  时：分：秒 类型时间
+     */
+    public  String LongToString_Time2(long l){
+        Date date = new Date(l);
+        SimpleDateFormat sim=new SimpleDateFormat("HH:mm:ss");
+        String time=sim.format(date);
+        return time;
+    }
+
+    /**
+     * 将没有图标的应用转换成这个，
+     * @param drawable
+     * @return
+     */
+    static public Bitmap getBitmapFromDrawable(@NonNull Drawable drawable) {
+        // 部分应用没有图标，会返回AdaptiveiconDrawable，用这种方式也能转换为Bitmap
+        final Bitmap bmp = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(bmp);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bmp;
     }
 }
 
@@ -363,79 +434,4 @@ public class GetData {
 /*
  * app使用信息
  */
-class AppUsageInfo {
-    Drawable appIcon; // You may add get this usage data also, if you wish.
-    String appName, packageName;
-    Integer timeInForeground;
-    Integer LastRuntime;
-    int launchCount;
-    long FirstRunningTime,LastRunningTime;
-    //以包名为形参的构造函数
-    AppUsageInfo(String pName) {
-        this.packageName=pName;
-    }
 
-    public Drawable getAppIcon() {
-        return appIcon;
-    }
-
-    public void setAppIcon(Drawable appIcon) {
-        this.appIcon = appIcon;
-    }
-
-    public String getAppName() {
-        return appName;
-    }
-
-    public void setAppName(String appName) {
-        this.appName = appName;
-    }
-
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
-    }
-
-    public Integer getLastRuntime() {
-        return LastRuntime;
-    }
-
-    public void setLastRuntime(Integer lastRuntime) {
-        LastRuntime = lastRuntime;
-    }
-
-    public Integer getTimeInForeground() {
-        return timeInForeground;
-    }
-
-    public void setTimeInForeground(Integer timeInForeground) {
-        this.timeInForeground = timeInForeground;
-    }
-
-    public int getLaunchCount() {
-        return launchCount;
-    }
-
-    public void setLaunchCount(int launchCount) {
-        this.launchCount = launchCount;
-    }
-
-    public long getFirstRunningTime() {
-        return FirstRunningTime;
-    }
-
-    public void setFirstRunningTime(long firstRunningTime) {
-        FirstRunningTime = firstRunningTime;
-    }
-
-    public long getLastRunningTime() {
-        return LastRunningTime;
-    }
-
-    public void setLastRunningTime(long lastRunningTime) {
-        LastRunningTime = lastRunningTime;
-    }
-}

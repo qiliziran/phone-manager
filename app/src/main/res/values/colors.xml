@@ -5,6 +5,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorLauncher">#D81B60</color>
+    <color name="searchbackgroundcolor">#e2eaeb</color>
 
     <color name="red">#f16d7a</color>
     <color name="green">#b7d28d</color>

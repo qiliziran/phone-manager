@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <litepal>
     <dbname value="UserDatas" ></dbname>
-    <version value="2" ></version>
+    <version value="3" ></version>
 
     <list>
         <mapping class="com.example.PhoneManager.DataBase.UserData"></mapping>
         <mapping class="com.example.PhoneManager.DataBase.AppUsageData"></mapping>
+        <mapping class="com.example.PhoneManager.DataBase.AppIconData"></mapping>
     </list>
 </litepal>

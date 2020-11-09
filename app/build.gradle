@@ -39,5 +39,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation'org.litepal.android:core:1.6.1'
     implementation 'com.ashokvarma.android:bottom-navigation-bar:2.0.4'
+    implementation 'com.veken:chart_view:1.0.2'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.0.0'
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.1'
 }

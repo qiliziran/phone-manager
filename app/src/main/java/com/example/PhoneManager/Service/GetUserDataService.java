@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.example.PhoneManager.AppInfoProvider;
 import com.example.PhoneManager.DataBase.UserData;
 import com.example.PhoneManager.GetData;
 
@@ -60,8 +61,10 @@ public class GetUserDataService extends Service {
         long end_time = System.currentTimeMillis();
 //        long start_time = end_time - hour_in_mil;
         long start_time = end_time-1000*60*60*18;
-//        getdata.SaveToDatabase(start_time,end_time,this);
-
+        getdata.SaveToDatabase(start_time,end_time,this);
+        //将获取app的图标存进数据库的功能封装成service
+        AppInfoProvider app = new AppInfoProvider(this);
+        app.getAllAppUsage();
         Log.d(TAG, "后台获取数据成功！");
         return START_NOT_STICKY;
     }

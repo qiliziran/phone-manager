@@ -3,18 +3,28 @@
  * 主要依靠packageManager类
  */
 package com.example.PhoneManager;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import com.example.PhoneManager.R;
+import com.example.PhoneManager.DataBase.AppIconData;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import org.litepal.crud.DataSupport;
+
+import static com.example.PhoneManager.Service.GetUserDataService.getApplicationNameByPackageName;
 
 public class AppInfoProvider {
 
@@ -78,6 +88,8 @@ public class AppInfoProvider {
      * 非系统应用程序
      */
     public HashMap<String, AppUsageInfo> getAllAppUsage(){
+        DataSupport.deleteAll(AppIconData.class);
+        List<AppIconData> AppIconDataList = new ArrayList<AppIconData>();
         HashMap<String, AppUsageInfo> map = new HashMap<>();
         //获取到所有安装了的应用程序的信息，包括那些卸载了的，但没有清除数据的应用程序
         List<PackageInfo> packageInfos = packageManager.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
@@ -98,14 +110,30 @@ public class AppInfoProvider {
             //将app的信息存进map中
             if(filterApp(appInfo)){
                 map.put(packageName, new AppUsageInfo(packageName));
-                map.get(packageName).setAppIcon(icon);
+                Bitmap bicon = getBitmapFromDrawable(icon);
+                map.get(packageName).setAppIcon(bicon);
                 map.get(packageName).setAppName(appName);
                 map.get(packageName).setPackageName(packageName);
                 //如果应用图标不可见，则设置默认图标
-                if (!map.get(packageName).getAppIcon().isVisible()){
-                    map.get(packageName).setAppIcon(context.getResources().getDrawable(R.drawable.launch_icon));
+                if (!icon.isVisible()){
+                    Bitmap defaulticon = getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.launch_icon));
+                    map.get(packageName).setAppIcon(defaulticon);
                 }
             }
+        }
+        int count=0;
+        //输出使用情况：
+        for (Map.Entry<String, AppUsageInfo> entry : map.entrySet()) {
+            AppIconData AppIcon = new AppIconData();
+            AppIcon.setAppName(getApplicationNameByPackageName(context,entry.getKey()));
+            AppIcon.setAppPackageName(entry.getValue().getPackageName());
+            AppIcon.setAppIcon(entry.getValue().getAppIcon());
+            AppIconDataList.add(count++,AppIcon);
+            DataSupport.saveAll(AppIconDataList);
+//            Log.d("TAG", "app包名："+entry.getKey()+"\t"
+//                    +"app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
+//                    +"app启动次数： "+entry.getValue().launchCount+"\t"
+//                    +"app运行时间： "+entry.getValue().timeInForeground);
         }
         return map;
     }
@@ -122,5 +150,25 @@ public class AppInfoProvider {
             return true;
         }
         return false;
+    }
+
+    static public Bitmap getBitmapFromDrawable(@NonNull Drawable drawable) {
+        // 部分应用没有图标，会返回AdaptiveiconDrawable，用这种方式也能转换为Bitmap
+        final Bitmap bmp = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(bmp);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bmp;
+    }
+
+    //将drawable转换成可以用来存储的byte[]类型
+    private byte[] BitmapToByte(Bitmap appicon) {
+        if(appicon == null) {
+            return null;
+        }
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        appicon.compress(Bitmap.CompressFormat.PNG, 100, os);
+        return os.toByteArray();
     }
 }

@@ -30,6 +30,7 @@ import org.litepal.LitePal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
 
@@ -67,17 +68,17 @@ public class MainActivity extends AppCompatActivity {
         //获取应用详细使用记录
         long hour_in_mil = 1000*60*60; // In Milliseconds
         long end_time = System.currentTimeMillis();
-//        long start_time = end_time - hour_in_mil;
         long start_time = getStartTime();
-        Log.d(TAG, "起始时间："+LongToString_Time(start_time)+"\t"+"结束时间："+LongToString_Time(end_time));
+
+//        Log.d(TAG, "起始时间："+LongToString_Time(start_time)+"\t"+"结束时间："+LongToString_Time(end_time));
         //版本一
-        UsageEvent UE = new UsageEvent(hour_in_mil,start_time,end_time);
-        UE.getUsageStatistics(MainActivity.this);
+//        UsageEvent UE = new UsageEvent(hour_in_mil,start_time,end_time);
+//        UE.getUsageStatistics(MainActivity.this);
         //版本二
-        GetData appdata = new GetData(MainActivity.this);
-//        appdata.GetTopApps(MainActivity.this);
+//        GetData appdata = new GetData(MainActivity.this);
+//        List<AppUsageInfo> a = appdata.GetTopApps(MainActivity.this);
 //        appdata.getUsageStatistics(start_time,end_time,MainActivity.this);
-        appdata.GetLastestApps(MainActivity.this);
+//        appdata.GetLastestApps(MainActivity.this);
 
 //        this.getSupportActionBar().hide();
         /* 获取底部导航栏视图 */
@@ -108,27 +109,6 @@ public class MainActivity extends AppCompatActivity {
         todayStart.set(Calendar.SECOND, 0);
         todayStart.set(Calendar.MILLISECOND, 0);
         return todayStart.getTime().getTime();
-    }
-
-    /**
-     * 获取今天结束时间
-     */
-    private Long getEndTime() {
-        Calendar todayEnd = Calendar.getInstance();
-        todayEnd.set(Calendar.HOUR, 23);
-        todayEnd.set(Calendar.MINUTE, 59);
-        todayEnd.set(Calendar.SECOND, 59);
-        todayEnd.set(Calendar.MILLISECOND, 999);
-        return todayEnd.getTime().getTime();
-    }
-    /**
-     *long类型时间--> xxxx年-xx月-xx日 时：分：秒 类型时间
-     */
-    public static String LongToString_Time(long l){
-        Date date = new Date(l);
-        SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String time=sim.format(date);
-        return time;
     }
 
 }

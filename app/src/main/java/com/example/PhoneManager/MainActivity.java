@@ -72,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
 //        Log.d(TAG, "起始时间："+LongToString_Time(start_time)+"\t"+"结束时间："+LongToString_Time(end_time));
         //版本一
-//        UsageEvent UE = new UsageEvent(hour_in_mil,start_time,end_time);
-//        UE.getUsageStatistics(MainActivity.this);
+        UsageEvent UE = new UsageEvent(hour_in_mil,start_time,end_time);
+        UE.getUsageStatistics(MainActivity.this);
         //版本二
 //        GetData appdata = new GetData(MainActivity.this);
 //        List<AppUsageInfo> a = appdata.GetTopApps(MainActivity.this);
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private Long getStartTime() {
         Calendar todayStart = Calendar.getInstance();
-        todayStart.set(Calendar.HOUR, 0);
+        todayStart.set(Calendar.HOUR_OF_DAY, 0);
         todayStart.set(Calendar.MINUTE, 0);
         todayStart.set(Calendar.SECOND, 0);
         todayStart.set(Calendar.MILLISECOND, 0);

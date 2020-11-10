@@ -67,7 +67,7 @@ public class GetData {
 
         UsageStatsManager mUsageStatsManager = (UsageStatsManager)
                 context.getSystemService(Context.USAGE_STATS_SERVICE);
-
+        long Todayorigintime = getStartTime();
         if (mUsageStatsManager != null) {
             // Get all apps data from starting time to end time
             UsageEvents usageEvents = mUsageStatsManager.queryEvents(start_time, end_time);
@@ -120,7 +120,7 @@ public class GetData {
                             }
                             //设置最后一次运行时间
                             map.get(E0.getPackageName()).LastRunningTime=E0.getTimeStamp();
-                            map.get(E0.getPackageName()).LastRuntime =(int) (map.get(E0.getPackageName()).LastRunningTime%86400000);
+                            map.get(E0.getPackageName()).LastRuntime =(int) (map.get(E0.getPackageName()).LastRunningTime-Todayorigintime);
                         }
                         if(E0.getEventType() == UsageEvents.Event.ACTIVITY_PAUSED){
                             map.get(E0.getPackageName()).LastBackTime=E0.getTimeStamp();
@@ -217,11 +217,17 @@ public class GetData {
             AllRunningTime+=entry.getValue().timeInForeground;
         }
         for (Map.Entry<String, AppUsageInfo> entry : map.entrySet()) {
+
+            float percentage = (float)(entry.getValue().timeInForeground*100/AllRunningTime);
+            Log.d("TAG", "app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
+                    +"app运行时间： "+percentage+"\t"
+                    +"app真运行时间： "+entry.getValue().timeInForeground);
+
             if(count<4){
                 //获取app图标
 //                entry.getValue().appIcon=iconmap.get(entry.getKey()).getAppIcon();
 
-                float percentage = (float)(entry.getValue().timeInForeground*100/AllRunningTime);
+
 //                Log.d("TAG", "app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
 //                        +"app运行时间： "+percentage+"\t"
 //                        +"app真运行时间： "+entry.getValue().timeInForeground);
@@ -242,7 +248,7 @@ public class GetData {
         others.setTimeInForegroundPercentage(100-TopTopRunningTimePercentage);
         Log.d("TAG", "app名称："+others.appName+"\t"
                 +"app运行时间： "+others.timeInForegroundPercentage+"\t"
-                +"app运行时间： "+others.timeInForeground);
+                +"app真运行时间： "+others.timeInForeground);
         TopApps.add(others);
 //            //输出使用情况：
 //            for (Map.Entry<String, AppUsageInfo> entry : map.entrySet()) {
@@ -276,24 +282,27 @@ public class GetData {
         //按照最后一次运行时间排序
         map = sortByLastRunningTime(map);
         for (Map.Entry<String, AppUsageInfo> entry : map.entrySet()) {
+//            Log.d("TAG", "app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
+//                    +"app最后运行时间： "+entry.getValue().LastRuntime
+//                    +"app包名： "+entry.getValue().packageName);
             //历史性BUG！！！iconmap.containsKey(entry.getKey())这句话用于判断最近的应用中没有图标的情况
             if(count<4&&iconmap.containsKey(entry.getKey())){
                 //获取app图标
-//                String[] column = {"appicon"};//你要的数据
-//                String condition="packagename=?";
-//                String[] selectionArgs={entry.getKey()};//具体的条件,注意要对应条件字段
-//                Cursor cursor=sd.query("Appicon", column, condition,selectionArgs, null, null, null, null);
-//
-//                if (cursor.moveToFirst())
-//                {
-//                    byte[] b = cursor.getBlob(cursor.getColumnIndex("appicon"));
-//                    Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length, null);
-//                    entry.getValue().appIcon=bitmap;
-//                }
-//                cursor.close();
+                String[] column = {"appicon"};//你要的数据
+                String condition="packagename=?";
+                String[] selectionArgs={entry.getKey()};//具体的条件,注意要对应条件字段
+                Cursor cursor=sd.query("Appicon", column, condition,selectionArgs, null, null, null, null);
+
+                if (cursor.moveToFirst())
+                {
+                    byte[] b = cursor.getBlob(cursor.getColumnIndex("appicon"));
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length, null);
+                    entry.getValue().appIcon=bitmap;
+                }
+                cursor.close();
 
                 //将获取的数据转换成drawable
-                entry.getValue().appIcon=getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.launch_icon));
+//                entry.getValue().appIcon=getBitmapFromDrawable(context.getResources().getDrawable(R.drawable.launch_icon));
 //                entry.getValue().appIcon=iconmap.get(entry.getKey()).getAppIcon();
 //                Log.d("TAG", "app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
 //                        +"app最后运行时间： "+LongToString_Time2(entry.getValue().LastRunningTime)
@@ -303,7 +312,7 @@ public class GetData {
 //                Log.d("TAG", "count: "+count);
                 count++;
             }
-            if(count==4) break;
+//            if(count==4) break;
         }
         return LastestAppsList;
     }
@@ -409,7 +418,7 @@ public class GetData {
      */
     private Long getStartTime() {
         Calendar todayStart = Calendar.getInstance();
-        todayStart.set(Calendar.HOUR, 0);
+        todayStart.set(Calendar.HOUR_OF_DAY, 0);
         todayStart.set(Calendar.MINUTE, 0);
         todayStart.set(Calendar.SECOND, 0);
         todayStart.set(Calendar.MILLISECOND, 0);

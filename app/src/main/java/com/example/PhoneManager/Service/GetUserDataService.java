@@ -60,7 +60,7 @@ public class GetUserDataService extends Service {
         GetData getdata = new GetData(this);
         long end_time = System.currentTimeMillis();
 //        long start_time = end_time - hour_in_mil;
-        long start_time = end_time-1000*60*60*18;
+        long start_time = getStartTime();
         getdata.SaveToDatabase(start_time,end_time,this);
         //将获取app的图标存进数据库的功能封装成service
         AppInfoProvider app = new AppInfoProvider(this);
@@ -148,6 +148,19 @@ public class GetUserDataService extends Service {
             Name = "" ;
         }
         return Name;
+    }
+
+
+    /**
+     * 获取今天开始时间
+     */
+    private Long getStartTime() {
+        Calendar todayStart = Calendar.getInstance();
+        todayStart.set(Calendar.HOUR_OF_DAY, 0);
+        todayStart.set(Calendar.MINUTE, 0);
+        todayStart.set(Calendar.SECOND, 0);
+        todayStart.set(Calendar.MILLISECOND, 0);
+        return todayStart.getTime().getTime();
     }
 
 

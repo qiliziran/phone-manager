@@ -52,11 +52,6 @@ public class SearchView extends LinearLayout implements View.OnClickListener {
     private ListView lvTips;
 
     /**
-     * 提示adapter （推荐adapter）
-     */
-//    private ArrayAdapter<String> mHintAdapter;
-
-    /**
      * 自动补全adapter 只显示名字
      */
     private SearchItemAdapter mAutoCompleteAdapter;

@@ -1,7 +1,9 @@
 package com.example.PhoneManager.BottomFragments.home;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.view.LayoutInflater;
@@ -9,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -21,6 +24,8 @@ import com.example.PhoneManager.AppInfoAdapter;
 import com.example.PhoneManager.AppInfoProvider;
 
 import com.example.PhoneManager.AppUsageInfo;
+import com.example.PhoneManager.BottomFragments.home.util.SearchItemAdapter;
+import com.example.PhoneManager.BottomFragments.home.util.SearchItemBean;
 import com.example.PhoneManager.Features;
 import com.example.PhoneManager.FeaturesAdapter;
 import com.example.PhoneManager.GetData;
@@ -42,8 +47,73 @@ import java.util.Random;
 
 import static com.example.PhoneManager.AppInfoAdapter.getBitmapFromDrawable;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements SearchView.SearchViewListener{
+
+    /**
+     * 搜索结果列表view
+     */
+    private ListView lvResults;
+
+    /**
+     * 搜索view
+     */
+    private SearchView searchView;
+
+
+    /**
+     * 热搜框列表adapter
+     */
+//    private ArrayAdapter<String> hintAdapter;
+
+    /**
+     * 自动补全列表adapter
+     */
+    private SearchItemAdapter autoCompleteAdapter;
+
+
+    /**
+     * 数据库数据，总数据
+     */
+    private List<SearchItemBean> dbData;
+
+    /**
+     * 热搜版数据
+     */
+    private List<String> hintData;
+
+    /**
+     * 搜索过程中自动补全数据
+     */
+    private List<SearchItemBean> autoCompleteData;
+
+    /**
+     * 搜索结果的数据
+     */
+    private List<Bean> resultData;
+
+    /**
+     * 默认提示框显示项的个数
+     */
+    private static int DEFAULT_HINT_SIZE = 4;
+
+    /**
+     * 提示框显示项的个数
+     */
+    private static int hintSize = DEFAULT_HINT_SIZE;
+
+    /**
+     * 设置提示框显示项的个数
+     *
+     * @param hintSize 提示框显示个数
+     */
+    public static void setHintSize(int hintSize) {
+        HomeFragment.hintSize = hintSize;
+    }
+
+
+
     private Button btn_predict;
+    private ListView listView;
     private HomeViewModel homeViewModel;
     private PieChart mPieChart;
     private List<UsingRecord> lastestappList = new ArrayList<>();
@@ -54,26 +124,25 @@ public class HomeFragment extends Fragment {
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
 
-//        //获取app的图标名称等数据，在该Fragment中展示
-//        AppInfoProvider app = new AppInfoProvider(getContext());
-//        List<AppInfo> appInfoList =  app.getAllApps();
-//        Bitmap bitmap = getBitmapFromDrawable(appInfoList.get(0).getIcon());
-
-
-//        initFeatures();
         //加载布局
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-//        RecyclerView recyclerView = (RecyclerView) root.findViewById(R.id.recycler_view);
-//        //创建一个每行最多两个View的网格布局
-//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-//        recyclerView.setLayoutManager(gridLayoutManager);
-//        FeaturesAdapter adapter = new FeaturesAdapter(getContext(),featuresList);
-//        recyclerView.setAdapter(adapter);
 
         /*折线饼状图*/
         //1.初始化组件
         mPieChart = (PieChart) root.findViewById(R.id.mPieChart);
+        ListView listView = root.findViewById(R.id.use_record_list);
+        initPieChart();
 
+
+        //设置使用记录布局
+        initUsingRecord();
+        UsingRecordAdapter adapter = new UsingRecordAdapter(getActivity(), R.layout.app_using_item, lastestappList);
+
+        listView.setAdapter(adapter);
+        return root;
+    }
+
+    public void initPieChart(){
         mPieChart.setUsePercentValues(false); //设置是否使用百分值,默认不显示
         mPieChart.getDescription().setEnabled(false);
         mPieChart.setDragDecelerationFrictionCoef(0.95f);
@@ -109,11 +178,6 @@ public class HomeFragment extends Fragment {
         for (AppUsageInfo ap : TopApps) {
             entries.add(new PieEntry(ap.getTimeInForegroundPercentage(), ap.getAppName()));
         }
-//            entries.add(new PieEntry(80, "颜值"));
-//            entries.add(new PieEntry(100, "智慧"));
-//            entries.add(new PieEntry(50, "身材"));
-//            entries.add(new PieEntry(50, "性格"));
-//            entries.add(new PieEntry(20, "声音"));
 
         //设置数据
         setData(entries);
@@ -139,15 +203,12 @@ public class HomeFragment extends Fragment {
         // 输入图例标签样式
         mPieChart.setEntryLabelColor(Color.BLUE);
         mPieChart.setEntryLabelTextSize(18f);
+    }
 
-        //设置使用记录布局
-        initUsingRecord();
-        UsingRecordAdapter adapter = new UsingRecordAdapter(getActivity(), R.layout.app_using_item, lastestappList);
-        ListView listView = root.findViewById(R.id.use_record_list);
-        listView.setAdapter(adapter);
-        return root;
-        }
 
+    /**
+     * 初始化ListView列表
+      */
     private void initUsingRecord() {
         GetData appdata = new GetData(getActivity());
         List<AppUsageInfo> LastestApps = appdata.GetLastestApps(getActivity());
@@ -158,11 +219,6 @@ public class HomeFragment extends Fragment {
             u.setTime(appdata.LongToString_Time2(ap.getLastRunningTime()));
             lastestappList.add(u);
         }
-//        appInfoList =  appInfoProvider.getAllApps();
-//        for (int i = 0; i < appInfoList.size(); i++) {
-////            if (appInfoList.get(i).getIcon().)
-////            Log.d("myDebug", appInfoList.get(i).getAppName());
-//        }
     }
 
     //设置数据
@@ -177,21 +233,8 @@ public class HomeFragment extends Fragment {
         //设置个饼状图之间的距离
         dataSet.setSliceSpace(0f);
         //颜色的集合，按照存放的顺序显示
-//            ArrayList<Integer> colors = new ArrayList<Integer>();
-//            for (int c : ColorTemplate.VORDIPLOM_COLORS)
-//                colors.add(c);
-//            for (int c : ColorTemplate.JOYFUL_COLORS)
-//                colors.add(c);
-//            for (int c : ColorTemplate.COLORFUL_COLORS)
-//                colors.add(c);
-//            for (int c : ColorTemplate.LIBERTY_COLORS)
-//                colors.add(c);
-//            for (int c : ColorTemplate.PASTEL_COLORS)
-//                colors.add(c);
-//            colors.add(ColorTemplate.getHoloBlue());
+
         List<Integer> colors = new ArrayList<>();
-//            colors.add(Color.parseColor("#4A92FC"));
-//            colors.add(Color.parseColor("#ee6e55"));
             for (int i = 0; i <entries.size() ; i++) {
                 colors.add(colortables.get(i));
             }
@@ -217,16 +260,99 @@ public class HomeFragment extends Fragment {
             mPieChart.highlightValues(null);
             mPieChart.invalidate();
     }
-//    private void initFeatures() {
-//        Features applicationList = new Features("应用列表", R.drawable.application_list);
-//        featuresList.add(applicationList);
-//        Features battery = new Features("电池情况", R.drawable.battery);
-//        featuresList.add(battery);
-//        Features features3 = new Features("features3", R.drawable.features3);
-//        featuresList.add(features3);
-//        Features features4 = new Features("features4", R.drawable.features4);
-//        featuresList.add(features4);
-//    }
+
+    /**
+     * 初始化视图
+     */
+    private void initViews(View v) {
+        lvResults = (ListView) v.findViewById(R.id.main_lv_search_results);
+        searchView = (SearchView) v.findViewById(R.id.main_search_layout);
+        //设置监听
+        searchView.setSearchViewListener(this);
+        //设置adapter
+        searchView.setAutoCompleteAdapter(autoCompleteAdapter);
+    }
+
+    /**
+     * 初始化数据
+     */
+    private void initData() {
+        //从数据库获取数据
+        getDbData();
+        //初始化自动补全数据
+        getAutoCompleteData(null);
+    }
+
+    /**
+     * 获取db 数据
+     */
+    private void getDbData() {
+        AppInfoProvider appinfoPro = new AppInfoProvider(getActivity());
+        List<AppInfo> appinfo = appinfoPro.getAllApps();
+        dbData = new ArrayList<>();
+        for (int i = 0; i < appinfo.size(); i++) {
+            dbData.add(new SearchItemBean(getBitmapFromDrawable(appinfo.get(i).getIcon()),appinfo.get(i).getAppName()));
+        }
+    }
+
+    /**
+     * 获取自动补全data 和adapter
+     */
+    private void getAutoCompleteData(String text) {
+        if (autoCompleteData == null) {
+            //初始化
+            autoCompleteData = new ArrayList<>(hintSize);
+        } else {
+            // 根据text 获取auto data
+            autoCompleteData.clear();
+            for (int i = 0, count = 0; i < dbData.size()
+                    && count < hintSize; i++) {
+                if (dbData.get(i).getAppName().contains(text.trim())) {
+                    autoCompleteData.add(dbData.get(i));
+                    count++;
+                }
+            }
+        }
+        if (autoCompleteAdapter == null) {
+            autoCompleteAdapter = new SearchItemAdapter(getActivity(),R.layout.autocomplete_item, autoCompleteData);
+        } else {
+            autoCompleteAdapter.notifyDataSetChanged();
+        }
+    }
+
+    /**
+     * 当搜索框 文本改变时 触发的回调 ,更新自动补全数据
+     * @param text
+     */
+    @Override
+    public void onRefreshAutoComplete(String text) {
+        //更新数据
+        getAutoCompleteData(text);
+    }
+
+    /**
+     * 点击搜索键时edit text触发的回调
+     *
+     * @param text
+     */
+    @Override
+    public void onSearch(String text) {
+        Toast.makeText(getActivity(), "完成搜素", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * 图片：Drawble-->Bitmap
+     * @param drawable
+     * @return
+     */
+    static public Bitmap getBitmapFromDrawable(@NonNull Drawable drawable) {
+        // 部分应用没有图标，会返回AdaptiveiconDrawable，用这种方式也能转换为Bitmap
+        final Bitmap bmp = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        final Canvas canvas = new Canvas(bmp);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bmp;
+    }
 
 
 }

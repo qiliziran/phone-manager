@@ -127,7 +127,7 @@ public class HomeFragment extends Fragment implements SearchView.SearchViewListe
         //加载布局
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        /*折线饼状图*/
+
         //1.初始化组件
         mPieChart = (PieChart) root.findViewById(R.id.mPieChart);
         ListView listView = root.findViewById(R.id.use_record_list);

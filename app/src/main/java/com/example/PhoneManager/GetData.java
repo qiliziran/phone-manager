@@ -100,9 +100,9 @@ public class GetData {
                 //关键！必须先将其置0，否则后面会出现Null与数字相加，报错
                 map.get(entry.getKey()).timeInForeground = 0;
                 //初始化今日每个小时的运行时间和启动次数
-                map.get(entry.getKey()).EachHourLaunchCounts = new int[24];
+                map.get(entry.getKey()).EachHourLaunchCounts = new int[25];
                 map.get(entry.getKey()).EachHourLaunchCounts[NowHour()+1]=-1;
-                map.get(entry.getKey()).EachHourRunningTimes = new long[24];
+                map.get(entry.getKey()).EachHourRunningTimes = new long[25];
                 map.get(entry.getKey()).EachHourRunningTimes[NowHour()+1] = -1;
                 if (totalEvents > 1) {
                     for (int i = 0; i < totalEvents - 1; i++) {

@@ -1,42 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_centerHorizontal="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_marginTop="100dp"
+        android:id="@+id/iv_me_icon"
+        android:layout_width="260dp"
+        android:layout_height="260dp"
+        android:src="@drawable/me_icon"
+        app:civ_border_width="0dp"/>
+
+    <TextView
+        android:id="@+id/tv_me_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LiuJF"
+        android:textSize="60dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="50dp"
+        android:textColor="@color/black"/>
+
+    <TextView
+        android:id="@+id/tv_me_sign"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_me_name"
+        android:text="hello"
+        android:textSize="20dp"
+        android:layout_marginLeft="25dp"
+        android:textColor="@color/grey"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center|bottom"
+            android:gravity="center"
+            android:layout_below="@id/iv_me_icon"
             android:orientation="vertical"
-            android:paddingBottom="60dp">
-            <Button
-                android:id="@+id/xxx"
+            android:layout_marginBottom="60dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp">
+            <TextView
+                android:id="@+id/tv_me_tv1"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_gravity="center"
-                android:text="保留"
-                android:textSize="30dp"/>
-            <Button
-                android:id="@+id/my_app"
+                android:drawableLeft="@drawable/me"
+                android:text="保留功能"
+                android:textSize="20dp"
+                android:textColor="@color/white"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_me_tv1"
+                android:drawablePadding="50dp"
+                android:layout_marginTop="10dp"/>
+            <TextView
+                android:id="@+id/tv_me_tv2"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_gravity="center"
-                android:text="我的应用"
-                android:textSize="30dp"/>
-            <Button
-                android:id="@+id/loginout"
+                android:drawableLeft="@drawable/me"
+                android:text="应用列表"
+                android:textSize="20dp"
+                android:textColor="@color/white"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_me_tv2"
+                android:drawablePadding="50dp"
+                android:layout_marginTop="10dp"/>
+            <TextView
+                android:id="@+id/tv_me_tv3"
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_gravity="center"
+                android:drawableLeft="@drawable/me"
                 android:text="退出登录"
-                android:textSize="30dp"/>
+                android:textSize="20dp"
+                android:textColor="@color/white"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_me_tv3"
+                android:drawablePadding="50dp"
+                android:layout_marginTop="10dp"/>
         </LinearLayout>
-    </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

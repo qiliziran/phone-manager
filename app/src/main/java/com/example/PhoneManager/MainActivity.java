@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //判断是否处于登录状态
+        /*//判断是否处于登录状态
         SharedPreferences pref = getSharedPreferences("userdata",MODE_PRIVATE);
         String name = pref.getString("username","");
         boolean loginstate = pref.getBoolean("loginstate",false);
@@ -54,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
         LitePal.getDatabase();
         //启动 后台获取用户app数据 服务
-//        Intent StartIntent = new Intent(MainActivity.this, GetUserDataService.class);
-//        startService(StartIntent);
+        Intent StartIntent = new Intent(MainActivity.this, GetUserDataService.class);
+        startService(StartIntent);
 
         //开启SQLiteStudio数据库调试服务
         SQLiteStudioService.instance().start(this);
@@ -72,32 +72,33 @@ public class MainActivity extends AppCompatActivity {
 
 //        Log.d(TAG, "起始时间："+LongToString_Time(start_time)+"\t"+"结束时间："+LongToString_Time(end_time));
         //版本一
-//        UsageEvent UE = new UsageEvent(hour_in_mil,start_time,end_time);
-//        UE.getUsageStatistics(MainActivity.this);
+        UsageEvent UE = new UsageEvent(hour_in_mil,start_time,end_time);
+        UE.getUsageStatistics(MainActivity.this);
         //版本二
 //        GetData appdata = new GetData(MainActivity.this);
 //        List<AppUsageInfo> a = appdata.GetTopApps(MainActivity.this);
 //        appdata.getUsageStatistics(start_time,end_time,MainActivity.this);
 //        appdata.GetLastestApps(MainActivity.this);
-
+*/
 //        this.getSupportActionBar().hide();
-        /* 获取底部导航栏视图 */
+//         获取底部导航栏视图
         BottomNavigationView navView = findViewById(R.id.nav_view);
 //        BottomNavigationBar bottomNavigationBar = (BottomNavigationBar) findViewById(R.id.bottom_navigation_bar);
 //        bottomNavigationBar.setMode(BottomNavigationBar.MODE_FIXED);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        /* AppBar配置 */
+//         AppBar配置
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
                 .build();
 
-        /* 从Fragment获取导航控制器，navGraph定义了导航规则 */
+//         从Fragment获取导航控制器，navGraph定义了导航规则
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        /* 为AppBar设置导航控制器，监听导航改变事件，修改标题 */
+//        为AppBar设置导航控制器，监听导航改变事件，修改标题
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        /* 为视图设置导航控制器，即监听视图的点击事件 */
+//        为视图设置导航控制器，即监听视图的点击事件
         NavigationUI.setupWithNavController(navView, navController);
+
     }
     /**
      * 获取今天开始时间

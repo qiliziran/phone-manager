@@ -6,10 +6,15 @@ import android.graphics.drawable.Drawable;
 public class SearchItemBean {
     private Bitmap AppIcon;
     private String AppName;
+    private String AppPackageName;
+    private String AppVersion;
 
-    public SearchItemBean(Bitmap appIcon, String appName) {
+
+    public SearchItemBean(Bitmap appIcon, String appName, String appPackageName, String appVersion) {
         AppIcon = appIcon;
         AppName = appName;
+        AppPackageName = appPackageName;
+        AppVersion = appVersion;
     }
 
     public Bitmap getAppIcon() {
@@ -26,5 +31,21 @@ public class SearchItemBean {
 
     public void setAppName(String appName) {
         AppName = appName;
+    }
+
+    public String getAppPackageName() {
+        return AppPackageName;
+    }
+
+    public void setAppPackageName(String appPackageName) {
+        AppPackageName = appPackageName;
+    }
+
+    public String getAppVersion() {
+        return AppVersion;
+    }
+
+    public void setAppVersion(String appVersion) {
+        AppVersion = appVersion;
     }
 }

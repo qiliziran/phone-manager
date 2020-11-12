@@ -17,6 +17,7 @@ import com.example.PhoneManager.BottomFragments.home.util.SearchItemAdapter;
 import com.example.PhoneManager.BottomFragments.home.util.SearchItemBean;
 import com.example.PhoneManager.R;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -124,7 +125,7 @@ public class SearchAppActivity extends Activity implements SearchView.SearchView
         List<AppInfo> appinfo = appinfoPro.getAllApps();
         dbData = new ArrayList<>();
         for (int i = 0; i < appinfo.size(); i++) {
-            dbData.add(new SearchItemBean(getBitmapFromDrawable(appinfo.get(i).getIcon()),appinfo.get(i).getAppName()));
+            dbData.add(new SearchItemBean(getBitmapFromDrawable(appinfo.get(i).getIcon()), appinfo.get(i).getAppName(),appinfo.get(i).getPackageName(), appinfo.get(i).getVersionName()));
         }
     }
 

@@ -54,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
         LitePal.getDatabase();
         //启动 后台获取用户app数据 服务
-        Intent StartIntent = new Intent(MainActivity.this, GetUserDataService.class);
-        startService(StartIntent);
+//        Intent StartIntent = new Intent(MainActivity.this, GetUserDataService.class);
+//        startService(StartIntent);
 
         //开启SQLiteStudio数据库调试服务
         SQLiteStudioService.instance().start(this);
@@ -72,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
 //        Log.d(TAG, "起始时间："+LongToString_Time(start_time)+"\t"+"结束时间："+LongToString_Time(end_time));
         //版本一
-        UsageEvent UE = new UsageEvent(hour_in_mil,start_time,end_time);
-        UE.getUsageStatistics(MainActivity.this);
+//        UsageEvent UE = new UsageEvent(hour_in_mil,start_time,end_time);
+//        UE.getUsageStatistics(MainActivity.this);
         //版本二
 //        GetData appdata = new GetData(MainActivity.this);
 //        List<AppUsageInfo> a = appdata.GetTopApps(MainActivity.this);
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         /* 从Fragment获取导航控制器，navGraph定义了导航规则 */
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         /* 为AppBar设置导航控制器，监听导航改变事件，修改标题 */
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+//        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         /* 为视图设置导航控制器，即监听视图的点击事件 */
         NavigationUI.setupWithNavController(navView, navController);
     }

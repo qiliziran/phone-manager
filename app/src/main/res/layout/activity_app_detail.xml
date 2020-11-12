@@ -5,12 +5,145 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
-    <TextView
-        android:id="@+id/appname"
+    android:background="@color/white">
+<!--    顶部栏-->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="20dp"/>
+        android:layout_marginTop="10dp">
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/back"/>
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:text="应用详情"
+            android:textSize="19dp"
+            android:textColor="#000000"/>
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/detail"/>
+    </RelativeLayout>
+
+<!--    图标、名称及最近一次使用时间-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+        <ImageView
+            android:id="@+id/appicon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="45dp"
+            android:src="@drawable/vx"/>
+        <TextView
+            android:id="@+id/appname"
+            android:layout_toRightOf="@+id/appicon"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:gravity="left"
+            android:text="微信"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:textSize="20dp"/>
+        <TextView
+            android:id="@+id/lastestruntime"
+            android:layout_below="@+id/appname"
+            android:layout_toRightOf="@+id/appicon"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginLeft="20dp"
+            android:gravity="left"
+            android:text="最近一次启动: 22:20:16"
+            android:textSize="15dp"
+            />
+
+
+    </RelativeLayout>
+
+<!--    总运行时长、总启动次数-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="40dp">
+        <LinearLayout
+            android:layout_width="160dp"
+            android:layout_height="100dp"
+            android:layout_marginLeft="30dp"
+            android:layout_alignParentLeft="true"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/runtime"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:gravity="center_horizontal|bottom"
+                android:text="32分45秒"
+                android:textColor="#000000"
+                android:textSize="30dp"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/runtimetext"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:gravity="center"
+                android:text="运行时长"
+                android:textColor="#000000"
+                android:textSize="15dp"/>
+
+        </LinearLayout>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="50dp"
+            android:layout_centerInParent="true"
+            android:background="#000000"/>
+        <LinearLayout
+            android:layout_width="160dp"
+            android:layout_height="100dp"
+            android:layout_marginRight="30dp"
+            android:layout_alignParentRight="true"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/launchcount"
+                android:layout_width="match_parent"
+                android:layout_height="65dp"
+                android:gravity="center_horizontal|bottom"
+                android:text="40次"
+                android:textColor="#000000"
+                android:textSize="30dp"
+                android:textStyle="bold"/>
+            <TextView
+                android:id="@+id/launchcounttext"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:gravity="center"
+                android:text="启动次数"
+                android:textColor="#000000"
+                android:textSize="15dp"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+<!--    统计图-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_marginTop="40dp">
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/lc"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+
 </LinearLayout>

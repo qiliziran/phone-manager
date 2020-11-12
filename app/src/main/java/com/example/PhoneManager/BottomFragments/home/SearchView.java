@@ -3,6 +3,7 @@ package com.example.PhoneManager.BottomFragments.home;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -24,6 +25,8 @@ import com.example.PhoneManager.BottomFragments.home.util.SearchItemAdapter;
 import com.example.PhoneManager.BottomFragments.home.util.SearchItemBean;
 import com.example.PhoneManager.R;
 
+import java.io.ByteArrayOutputStream;
+
 public class SearchView extends LinearLayout implements View.OnClickListener {
 
     /**
@@ -39,7 +42,7 @@ public class SearchView extends LinearLayout implements View.OnClickListener {
     /**
      * 返回按钮
      */
-    private Button btnBack;
+    private TextView textBack;
 
     /**
      * 上下文对象
@@ -77,10 +80,42 @@ public class SearchView extends LinearLayout implements View.OnClickListener {
         initViews();
     }
 
+    public ImageView getIvDelete() {
+        return ivDelete;
+    }
+
+    public void setIvDelete(ImageView ivDelete) {
+        this.ivDelete = ivDelete;
+    }
+
+    public EditText getEtInput() {
+        return etInput;
+    }
+
+    public void setEtInput(EditText etInput) {
+        this.etInput = etInput;
+    }
+
+    public TextView getTextBack() {
+        return textBack;
+    }
+
+    public void setTextBack(TextView textBack) {
+        this.textBack = textBack;
+    }
+
+    public ListView getLvTips() {
+        return lvTips;
+    }
+
+    public void setLvTips(ListView lvTips) {
+        this.lvTips = lvTips;
+    }
+
     private void initViews() {
         etInput = (EditText) findViewById(R.id.search_et_input);
         ivDelete = (ImageView) findViewById(R.id.search_iv_delete);
-        btnBack = (Button) findViewById(R.id.search_btn_back);
+        textBack = (TextView) findViewById(R.id.search_btn_back);
         lvTips = (ListView) findViewById(R.id.search_lv_tips);
 
         lvTips.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -90,6 +125,11 @@ public class SearchView extends LinearLayout implements View.OnClickListener {
                 //漂亮！
                 SearchItemBean item = (SearchItemBean)lvTips.getItemAtPosition(position);
                 String text = item.getAppName();
+                String packagename = item.getAppPackageName();
+                String appversion = item.getAppVersion();
+                Bitmap bitmap = item.getAppIcon();
+                //需要先转换成byte[]类型的，才能用Intent传输
+                byte[] iconbyte = Bitmap2Bytes(bitmap);
 //                String text = lvTips.getAdapter().
                 etInput.setText(text);
                 etInput.setSelection(text.length());
@@ -100,13 +140,17 @@ public class SearchView extends LinearLayout implements View.OnClickListener {
 
                 //在自定义view中跳转到另一个页面！漂亮
                 Intent intent = new Intent(getContext(),AppDetailActivity.class);
+//                intent.put
                 intent.putExtra("appname",text);
+                intent.putExtra("apppackagename",packagename);
+                intent.putExtra("appversion",appversion);
+                intent.putExtra("appiconbyte",iconbyte);
                 getContext().startActivity(intent);
             }
         });
 
         ivDelete.setOnClickListener(this);
-        btnBack.setOnClickListener(this);
+        textBack.setOnClickListener(this);
 
         etInput.addTextChangedListener(new EditChangedListener());
         //点击弹出热门搜索框
@@ -186,9 +230,6 @@ public class SearchView extends LinearLayout implements View.OnClickListener {
                 etInput.setText("");
                 ivDelete.setVisibility(GONE);
                 break;
-            case R.id.search_btn_back:
-                ((Activity) mContext).finish();
-                break;
         }
     }
 
@@ -215,6 +256,13 @@ public class SearchView extends LinearLayout implements View.OnClickListener {
 //         * 提示列表项点击时回调方法 (提示/自动补全)
 //         */
 //        void onTipsItemClick(String text);
+    }
+
+
+    private byte[] Bitmap2Bytes(Bitmap bm){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return baos.toByteArray();
     }
 
 }

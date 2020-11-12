@@ -33,7 +33,7 @@
         android:layout_marginLeft="10dp"
         android:layout_centerVertical="true"
         android:gravity="center_vertical|left"
-        android:textColor="#ffffff"
+        android:textColor="@color/hometextcolor"
         android:textSize="14dp"/>
     <TextView
         android:id="@+id/time"
@@ -43,7 +43,7 @@
         android:layout_marginLeft="85dp"
         android:layout_centerVertical="true"
         android:gravity="center"
-        android:textColor="#ffffff"
+        android:textColor="@color/hometextcolor"
         android:textSize="15dp"/>
 
 

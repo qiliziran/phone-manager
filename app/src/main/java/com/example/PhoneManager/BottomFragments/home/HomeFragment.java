@@ -1,5 +1,8 @@
 package com.example.PhoneManager.BottomFragments.home;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -7,10 +10,18 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -46,6 +57,7 @@ import java.util.List;
 import java.util.Random;
 
 import static com.example.PhoneManager.AppInfoAdapter.getBitmapFromDrawable;
+import static com.veken.chartview.DensityUtils.dip2px;
 
 public class HomeFragment extends Fragment implements SearchView.SearchViewListener{
 
@@ -94,7 +106,7 @@ public class HomeFragment extends Fragment implements SearchView.SearchViewListe
     /**
      * 默认提示框显示项的个数
      */
-    private static int DEFAULT_HINT_SIZE = 4;
+    private static int DEFAULT_HINT_SIZE = 10;
 
     /**
      * 提示框显示项的个数
@@ -114,31 +126,107 @@ public class HomeFragment extends Fragment implements SearchView.SearchViewListe
 
     private Button btn_predict;
     private ListView listView;
+    private EditText searchedit;
+    private TextView todayusetext,lastestuse;
+    private LinearLayout piechart;
+    private FrameLayout searchlayout;
     private HomeViewModel homeViewModel;
     private PieChart mPieChart;
     private List<UsingRecord> lastestappList = new ArrayList<>();
     private List<Features> featuresList = new ArrayList<>();
+    @SuppressLint("ClickableViewAccessibility")
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+        final View root = inflater.inflate(R.layout.fragment_home, container, false);
 
-        //加载布局
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-
-
-        //1.初始化组件
+        //今日使用最多app
         mPieChart = (PieChart) root.findViewById(R.id.mPieChart);
-        ListView listView = root.findViewById(R.id.use_record_list);
         initPieChart();
-
-
-        //设置使用记录布局
+        //最近使用app，加载慢是因为获取图标！尝试将图标存进全局变量中
+//        final ListView listView = root.findViewById(R.id.use_record_list);
         initUsingRecord();
-        UsingRecordAdapter adapter = new UsingRecordAdapter(getActivity(), R.layout.app_using_item, lastestappList);
+//        UsingRecordAdapter adapter = new UsingRecordAdapter(getActivity(), R.layout.app_using_item, lastestappList);
+//        listView.setAdapter(adapter);
 
-        listView.setAdapter(adapter);
+        initData();
+        initViews(root);
+        todayusetext = root.findViewById(R.id.todayusetext);
+        lastestuse = root.findViewById(R.id.lastestuse);
+        piechart = root.findViewById(R.id.piechart);
+        searchlayout = root.findViewById(R.id.searchlayout);
+        //设置搜索框内图片大小
+        paddingPicture(searchView.getEtInput(),R.drawable.search_icon);
+        //取控件当前的布局参数
+
+        //点击搜索框，隐藏下方组件布局,注意这里需要设置触摸和点击两个事件！
+        searchView.getEtInput().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                todayusetext.setVisibility(View.GONE);
+                piechart.setVisibility(View.GONE);
+//                searchlayout.setla
+                mPieChart.setVisibility(View.GONE);
+                lastestuse.setVisibility(View.GONE);
+                searchView.getTextBack().setVisibility(View.VISIBLE);
+                //设置搜索框宽度，漂亮！
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) searchlayout.getLayoutParams();
+                //设置宽度值
+                params.width = dip2px(getActivity(), 310);
+                //使设置好的布局参数应用到控件
+                searchlayout.setLayoutParams(params);
+//                listView.setVisibility(View.GONE);
+            }
+        });
+        searchView.getEtInput().setOnTouchListener(new View.OnTouchListener() {
+            //按住和松开的标识
+            int touch_flag=0;
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                touch_flag++;
+                if(touch_flag==2){
+                    //自己业务
+                    todayusetext.setVisibility(View.GONE);
+                    piechart.setVisibility(View.GONE);
+                    mPieChart.setVisibility(View.GONE);
+                    lastestuse.setVisibility(View.GONE);
+                    searchView.getTextBack().setVisibility(View.VISIBLE);
+                    //设置搜索框宽度，漂亮！
+                    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) searchlayout.getLayoutParams();
+                    //设置宽度值
+                    params.width = dip2px(getActivity(), 310);
+                    //使设置好的布局参数应用到控件
+                    searchlayout.setLayoutParams(params);
+//                    listView.setVisibility(View.GONE);
+                }
+                return false;
+            }
+        });
+
+        searchView.getTextBack().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchView.getTextBack().setVisibility(View.GONE);
+                todayusetext.setVisibility(View.VISIBLE);
+                searchView.getIvDelete().setVisibility(View.GONE);
+                searchView.getLvTips().setVisibility(View.GONE);
+                piechart.setVisibility(View.VISIBLE);
+                mPieChart.setVisibility(View.VISIBLE);
+                lastestuse.setVisibility(View.VISIBLE);
+                //设置搜索框宽度，漂亮！
+                LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) searchlayout.getLayoutParams();
+                //设置宽度值
+                params.width = dip2px(getActivity(), 360);
+                //使设置好的布局参数应用到控件
+                searchlayout.setLayoutParams(params);
+//                listView.setVisibility(View.VISIBLE);
+                //隐藏软键盘
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        });
+
         return root;
     }
 
@@ -291,7 +379,7 @@ public class HomeFragment extends Fragment implements SearchView.SearchViewListe
         List<AppInfo> appinfo = appinfoPro.getAllApps();
         dbData = new ArrayList<>();
         for (int i = 0; i < appinfo.size(); i++) {
-            dbData.add(new SearchItemBean(getBitmapFromDrawable(appinfo.get(i).getIcon()),appinfo.get(i).getAppName()));
+            dbData.add(new SearchItemBean(getBitmapFromDrawable(appinfo.get(i).getIcon()),appinfo.get(i).getAppName(),appinfo.get(i).getPackageName(),appinfo.get(i).getVersionName()));
         }
     }
 
@@ -337,7 +425,13 @@ public class HomeFragment extends Fragment implements SearchView.SearchViewListe
      */
     @Override
     public void onSearch(String text) {
-        Toast.makeText(getActivity(), "完成搜素", Toast.LENGTH_SHORT).show();
+        //在自定义view中跳转到另一个页面！漂亮
+//        Intent intent = new Intent(getContext(),AppDetailActivity.class);
+////                intent.put
+//        intent.putExtra("appname",text);
+//        intent.putExtra("appicon",icon);
+//        getActivity().startActivity(intent);
+//        Toast.makeText(getActivity(), "完成搜素", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -354,5 +448,15 @@ public class HomeFragment extends Fragment implements SearchView.SearchViewListe
         return bmp;
     }
 
+    /**
+     * 设置组件内图片大小
+     * @param tv
+     * @param pic
+     */
+    void paddingPicture(EditText tv, int pic) {
+        Drawable drawable1 = getResources().getDrawable(pic);
+        drawable1.setBounds(0, 0, 55, 55);//第一0是距左边距离，第二0是距上边距离，40分别是长宽
+        tv.setCompoundDrawables(drawable1, null, null, null);//只放左边
+    }
 
 }

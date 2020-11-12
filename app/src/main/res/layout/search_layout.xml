@@ -1,31 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#eee"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <LinearLayout
-        android:background="#eb4f38"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center">
 
 
+<!--        <RelativeLayout-->
+<!--            android:layout_width="330dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:gravity="center"-->
+<!--            android:background="@drawable/search_background">-->
+
+<!--            <EditText-->
+<!--                android:id="@+id/search_et_input"-->
+
+<!--                android:drawableLeft="@drawable/search_icon"-->
+<!--                android:drawablePadding="5dp"-->
+<!--                android:layout_width="280dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:background="@drawable/search_edittext_shape"-->
+<!--                android:textSize="16sp"-->
+<!--                android:imeOptions="actionSearch"-->
+<!--                android:inputType="text"-->
+<!--                android:hint="请输入关键字"/>-->
+
+<!--            <ImageView-->
+<!--                android:visibility="invisible"-->
+<!--                android:layout_toRightOf="@+id/search_et_input"-->
+<!--                android:layout_centerVertical="true"-->
+<!--                android:layout_marginRight="20dp"-->
+<!--                android:src="@drawable/delete"-->
+<!--                android:id="@+id/search_iv_delete"-->
+<!--                android:layout_gravity="right|center_vertical"-->
+<!--                android:layout_width="30dp"-->
+<!--                android:layout_height="30dp"/>-->
+<!--        </RelativeLayout>-->
         <FrameLayout
-
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:id="@+id/searchlayout"
+            android:layout_width="360dp"
             android:layout_height="wrap_content">
 
             <EditText
                 android:id="@+id/search_et_input"
                 android:layout_gravity="center_vertical"
-                android:layout_margin="10dp"
+
                 android:drawableLeft="@drawable/search_icon"
                 android:drawablePadding="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textCursorDrawable="@drawable/searchcursorcolor"
                 android:background="@drawable/search_edittext_shape"
                 android:textSize="16sp"
                 android:imeOptions="actionSearch"
@@ -34,35 +66,33 @@
 
             <ImageView
                 android:visibility="gone"
-                android:layout_marginRight="20dp"
-                android:src="@drawable/iv_delete_bg"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/delete"
                 android:id="@+id/search_iv_delete"
                 android:layout_gravity="right|center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_width="22dp"
+                android:layout_height="22dp"/>
         </FrameLayout>
-
-        <Button
+        <TextView
+            android:visibility="gone"
             android:id="@+id/search_btn_back"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_gravity="center_vertical"
-            android:background="@drawable/btn_search_bg"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:layout_width="50dp"
             android:layout_height="40dp"
-            android:text="返回"
-            android:textColor="@color/white"/>
+            android:text="取消"
+            android:textColor="@color/schemeColor"/>
     </LinearLayout>
 
     <ListView
         android:visibility="gone"
         android:id="@+id/search_lv_tips"
         android:background="@drawable/lv_search_tips_bg"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
         android:layout_marginBottom="10dp"
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="wrap_content"
+        android:divider="#ffffff"
+        >
     </ListView>
 </LinearLayout>

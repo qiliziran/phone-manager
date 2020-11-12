@@ -5,7 +5,9 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorLauncher">#D81B60</color>
-    <color name="searchbackgroundcolor">#e2eaeb</color>
+    <color name="searchbackgroundcolor">#fafafa</color>
+
+    <color name="hometextcolor">#000000</color>
 
     <color name="red">#f16d7a</color>
     <color name="green">#b7d28d</color>
@@ -17,4 +19,9 @@
     <color name="color_white">#ffffff</color>
     <color name="btn_press_color">#5677fc</color>
     <color name="btn_pressed_color">#3ca0ec</color>
+
+
+    <color name="linecolor">#FF6FA9E1</color>
+
+
 </resources>

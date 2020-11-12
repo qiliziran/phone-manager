@@ -93,13 +93,17 @@ public class GetData {
                 }
             }
 
-            // Traverse through each app data which is grouped together and count launch, calculate duration
+            // 对单个app的所有事件进行整理，统计相关信息
             boolean firstrun=true;
-            boolean lastrun=true;
             for (Map.Entry<String,List<UsageEvents.Event>> entry : sameEvents.entrySet()) {
                 int totalEvents = entry.getValue().size();
                 //关键！必须先将其置0，否则后面会出现Null与数字相加，报错
                 map.get(entry.getKey()).timeInForeground = 0;
+                //初始化今日每个小时的运行时间和启动次数
+                map.get(entry.getKey()).EachHourLaunchCounts = new int[24];
+                map.get(entry.getKey()).EachHourLaunchCounts[NowHour()+1]=-1;
+                map.get(entry.getKey()).EachHourRunningTimes = new long[24];
+                map.get(entry.getKey()).EachHourRunningTimes[NowHour()+1] = -1;
                 if (totalEvents > 1) {
                     for (int i = 0; i < totalEvents - 1; i++) {
                         UsageEvents.Event E0 = entry.getValue().get(i);
@@ -110,6 +114,7 @@ public class GetData {
 //                        }
                         if (E0.getEventType() == UsageEvents.Event.ACTIVITY_RESUMED) {
                             map.get(E0.getPackageName()).launchCount++;
+                            map.get(E0.getPackageName()).EachHourLaunchCounts[Hour(E0.getTimeStamp())]++;
                             //设置第一次运行时间
                             if(firstrun){
                                 map.get(E0.getPackageName()).FirstRunningTime=E0.getTimeStamp();
@@ -129,6 +134,13 @@ public class GetData {
                             long diff = E1.getTimeStamp() - E0.getTimeStamp();
                             int Foregroundtime = (int)diff+map.get(E0.getPackageName()).timeInForeground.intValue();
                             map.get(E0.getPackageName()).timeInForeground =(int)Foregroundtime;
+                            //进入前台和进入后台在同一小时内
+                            if(Hour(E0.getTimeStamp())==Hour(E1.getTimeStamp())){
+                                map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E0.getTimeStamp())] +=diff;
+                            }else{
+                                long temp = 3600000;
+                                map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E0.getTimeStamp())]+= 3600000-(E0.getTimeStamp()%3600000);
+                            }    map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E1.getTimeStamp())]+= E1.getTimeStamp()%3600000;
                         }
                     }
                     //统计该应用最后一个事件是否是进入前台，如果是，将启动次数加1
@@ -140,18 +152,21 @@ public class GetData {
 
                 //关键！必须将firstrun重置，否则只能获取第一个应用的第一次启动时间
                 firstrun = true;
-                // 如果第一次事件是进入前台，则统计开始的时间戳---第一次事件的时间戳，这段时间也算是前台运行时间，需要统计到
+                // 如果第一次事件是进入后台，则统计开始的时间戳---第一次事件的时间戳，这段时间也算是前台运行时间，需要统计到
                 if (entry.getValue().get(0).getEventType() == 2) {
                     long diff = entry.getValue().get(0).getTimeStamp() - start_time;
-                    int Foregroundtime1 = (int)diff+map.get(entry.getValue().get(0).getPackageName()).timeInForeground;
-                    map.get(entry.getValue().get(0).getPackageName()).timeInForeground =(int)Foregroundtime1;
+                    map.get(entry.getKey()).EachHourRunningTimes[Hour(entry.getValue().get(0).getTimeStamp())] +=diff;
+                    int Foregroundtime1 = (int)diff+map.get(entry.getKey()).timeInForeground;
+                    map.get(entry.getKey()).timeInForeground =(int)Foregroundtime1;
+
                 }
 
                 // 如果最后一次事件是进入前台，则最后一次事件的时间戳---统计结束的时间戳，这段时间也算是前台运行时间，需要统计到
                 if (entry.getValue().get(totalEvents - 1).getEventType() == 1) {
                     long diff = end_time - entry.getValue().get(totalEvents - 1).getTimeStamp();
-                    int Foregroundtime2 = (int)diff+map.get(entry.getValue().get(totalEvents - 1).getPackageName()).timeInForeground;
-                    map.get(entry.getValue().get(totalEvents - 1).getPackageName()).timeInForeground =(int)Foregroundtime2;
+                    map.get(entry.getKey()).EachHourRunningTimes[Hour(entry.getValue().get(totalEvents - 1).getTimeStamp())] +=diff;
+                    int Foregroundtime2 = (int)diff+map.get(entry.getKey()).timeInForeground;
+                    map.get(entry.getKey()).timeInForeground =(int)Foregroundtime2;
                 }
             }
             map = sortBytimeInForeground(map);
@@ -219,9 +234,9 @@ public class GetData {
         for (Map.Entry<String, AppUsageInfo> entry : map.entrySet()) {
 
             float percentage = (float)(entry.getValue().timeInForeground*100/AllRunningTime);
-            Log.d("TAG", "app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
-                    +"app运行时间： "+percentage+"\t"
-                    +"app真运行时间： "+entry.getValue().timeInForeground);
+//            Log.d("TAG", "app名称："+getApplicationNameByPackageName(context,entry.getKey())+"\t"
+//                    +"app运行时间： "+percentage+"\t"
+//                    +"app真运行时间： "+entry.getValue().timeInForeground);
 
             if(count<4){
                 //获取app图标
@@ -237,7 +252,12 @@ public class GetData {
                 if (entry.getValue().timeInForegroundPercentage!=0.0){
                     TopApps.add(entry.getValue());
                 }
-
+                for (int i = 0; i <24 ; i++) {
+                    Log.d(entry.getValue().appName+"运行时间", i+"点:"+entry.getValue().EachHourRunningTimes[i]);
+                }
+                for (int i = 0; i <24 ; i++) {
+                    Log.d(entry.getValue().appName+"启动次数", i+"点:"+entry.getValue().EachHourLaunchCounts[i]);
+                }
                 count++;
             }
         }
@@ -416,7 +436,7 @@ public class GetData {
     /**
      * 获取今天开始时间
      */
-    private Long getStartTime() {
+    public Long getStartTime() {
         Calendar todayStart = Calendar.getInstance();
         todayStart.set(Calendar.HOUR_OF_DAY, 0);
         todayStart.set(Calendar.MINUTE, 0);
@@ -456,6 +476,32 @@ public class GetData {
         SimpleDateFormat sim=new SimpleDateFormat("HH:mm:ss");
         String time=sim.format(date);
         return time;
+    }
+
+    /**
+     * 将long类型的今日时间转换成具体多少点
+     * @param time
+     * @return
+     */
+    public int Hour(long time){
+        long todaytime = getStartTime();
+        long di = time-todaytime;
+        int d = (int)di;
+        int hour = d/3600000;
+        return hour;
+    }
+
+    /**
+     * 计算现在是多少点
+     * @return
+     */
+    public int NowHour(){
+        long nowtime = System.currentTimeMillis();
+        long todaytime = getStartTime();
+        long di = nowtime-todaytime;
+        int d = (int)di;
+        int hour = d/3600000;
+        return hour;
     }
 
     /**

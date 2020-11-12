@@ -78,15 +78,3 @@ public class SearchItemAdapter extends ArrayAdapter<SearchItemBean> {
     }
 }
 
-//public class SearchItemAdapter extends CommonAdapter<SearchItemBean>{
-//
-//    public SearchItemAdapter(Context context, List<SearchItemBean> data, int layoutId) {
-//        super(context, data, layoutId);
-//    }
-//
-//    @Override
-//    public void convert(ViewHolder holder, int position) {
-//        holder.setImageBitmap(R.id.item_search_iv_icon,mData.get(position).getAppIcon())
-//                .setText(R.id.search_item_name,mData.get(position).getAppName());
-//    }
-//}

@@ -3,6 +3,8 @@ package com.example.PhoneManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
+import java.util.List;
+
 public  class AppUsageInfo {
     Bitmap appIcon; // You may add get this usage data also, if you wish.
     String appName, packageName;
@@ -11,6 +13,8 @@ public  class AppUsageInfo {
     Integer LastRuntime;
     int launchCount;
     long FirstRunningTime,LastRunningTime,LastBackTime;
+    long[] EachHourRunningTimes;
+    int[] EachHourLaunchCounts;
     //以包名为形参的构造函数
     AppUsageInfo(String pName) {
         this.packageName=pName;
@@ -94,5 +98,21 @@ public  class AppUsageInfo {
 
     public void setLastBackTime(long lastBackTime) {
         LastBackTime = lastBackTime;
+    }
+
+    public long[] getEachHourRunningTimes() {
+        return EachHourRunningTimes;
+    }
+
+    public void setEachHourRunningTimes(long[] eachHourRunningTimes) {
+        EachHourRunningTimes = eachHourRunningTimes;
+    }
+
+    public int[] getEachHourLaunchCounts() {
+        return EachHourLaunchCounts;
+    }
+
+    public void setEachHourLaunchCounts(int[] eachHourLaunchCounts) {
+        EachHourLaunchCounts = eachHourLaunchCounts;
     }
 }

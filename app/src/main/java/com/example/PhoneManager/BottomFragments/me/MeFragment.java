@@ -45,13 +45,6 @@ public class MeFragment extends Fragment {
         meViewModel =
                 ViewModelProviders.of(this).get(MeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_me, container, false);
-        final TextView textView = root.findViewById(R.id.text_notifications);
-        meViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
 
         //退出登录监听事件
         loginout = root.findViewById(R.id.loginout);

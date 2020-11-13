@@ -16,4 +16,9 @@
     <string name="repassword_hint"><font size="15">确认密码</font></string>
     <string name="username_hint"><font size="15">用户名</font></string>
     <string name="phone_hint"><font size="15">手机号</font></string>
+    <string name="runtime"><font size="16">按运行时长</font></string>
+    <string name="launchcount"><font size="16">按启动次数</font></string>
+
+    <string name="linecolor_time">#54ddf5</string>
+    <string name="linecolor_count">#f7e02e</string>
 </resources>

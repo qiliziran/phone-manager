@@ -138,9 +138,13 @@ public class GetData {
                             if(Hour(E0.getTimeStamp())==Hour(E1.getTimeStamp())){
                                 map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E0.getTimeStamp())] +=diff;
                             }else{
-                                long temp = 3600000;
-                                map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E0.getTimeStamp())]+= 3600000-(E0.getTimeStamp()%3600000);
-                            }    map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E1.getTimeStamp())]+= E1.getTimeStamp()%3600000;
+                                //midhour 是 Hour(E1.getTimeStamp())，这点的long类型时间
+                                long midhour = SomeHour(Hour(E1.getTimeStamp()));
+                                map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E0.getTimeStamp())]+=(midhour-E0.getTimeStamp()) ;
+                                map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E1.getTimeStamp())]+= (E1.getTimeStamp()-midhour);
+                            }
+//                                map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E0.getTimeStamp())]+= diff/2;
+//                            }    map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E1.getTimeStamp())]+= diff/2;
                         }
                     }
                     //统计该应用最后一个事件是否是进入前台，如果是，将启动次数加1
@@ -504,6 +508,12 @@ public class GetData {
         return hour;
     }
 
+
+    public long SomeHour(int h){
+        long todaytime = getStartTime();
+        todaytime+=(long)(h*60*60*1000);
+        return todaytime;
+    }
     /**
      * 将没有图标的应用转换成这个，
      * @param drawable

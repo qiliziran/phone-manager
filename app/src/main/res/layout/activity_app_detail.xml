@@ -12,6 +12,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="10dp">
         <ImageView
+            android:id="@+id/appdetailbackhome"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginLeft="20dp"
@@ -137,12 +138,39 @@
 <!--    统计图-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="350dp"
-        android:layout_marginTop="40dp">
+        android:layout_height="380dp"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:gravity="center_vertical|right"
+            android:orientation="horizontal">
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/savedata"
+                android:layout_width="200dp"
+                android:layout_height="20dp"
+                android:layout_alignParentLeft="true"/>
+            <TextView
+                android:id="@+id/sorttext"
+                android:layout_gravity="right"
+                android:layout_width="80dp"
+                android:layout_height="20dp"
+                android:text="@string/runtime"/>
+            <ImageView
+                android:layout_toRightOf="@id/sorttext"
+                android:layout_marginRight="20dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:src="@drawable/sort"/>
+        </LinearLayout>
+
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/lc"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="350dp"/>
+
     </LinearLayout>
 
 

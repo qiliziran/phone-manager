@@ -45,4 +45,5 @@ dependencies {
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.0'
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.1'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.github.ptnplanet:Java-Naive-Bayes-Classifier:1.0.7'
 }

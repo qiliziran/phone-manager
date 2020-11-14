@@ -181,6 +181,222 @@ public class GetData {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public HashMap<String, AppUsageInfo> getUsageStatistics22(long start_time, long end_time, Context context) {
+        UsageEvents.Event currentEvent;
+        //  List<UsageEvents.Event> allEvents = new ArrayList<>();
+        HashMap<String, AppUsageInfo> map = new HashMap<>();
+        HashMap<String, List<UsageEvents.Event>> sameEvents = new HashMap<>();
+
+        UsageStatsManager mUsageStatsManager = (UsageStatsManager)
+                context.getSystemService(Context.USAGE_STATS_SERVICE);
+        long Todayorigintime = getStartTime();
+        if (mUsageStatsManager != null) {
+            // Get all apps data from starting time to end time
+            UsageEvents usageEvents = mUsageStatsManager.queryEvents(start_time, end_time);
+
+            // 将事件集进行划分
+            while (usageEvents.hasNextEvent()) {
+                currentEvent = new UsageEvents.Event();
+                usageEvents.getNextEvent(currentEvent);
+                //ACTIVITY_RESUMED表示进入前台，ACTIVITY_PAUSED表示进入后台
+                if (currentEvent.getEventType() == UsageEvents.Event.ACTIVITY_RESUMED ||
+                        currentEvent.getEventType() == UsageEvents.Event.ACTIVITY_PAUSED) {
+                    //  allEvents.add(currentEvent);
+                    String key = currentEvent.getPackageName();
+                    //判断是否是系统应用程序
+                    if(!SystemAppfilter(key)){
+                        if (map.get(key) == null) {
+                            map.put(key, new AppUsageInfo(key));
+                            sameEvents.put(key,new ArrayList<UsageEvents.Event>());
+                        }
+                        sameEvents.get(key).add(currentEvent);
+                    }
+
+                }
+            }
+
+            // 对单个app的所有事件进行整理，统计相关信息
+            boolean firstrun=true;
+            for (Map.Entry<String,List<UsageEvents.Event>> entry : sameEvents.entrySet()) {
+                int totalEvents = entry.getValue().size();
+                //关键！必须先将其置0，否则后面会出现Null与数字相加，报错
+                map.get(entry.getKey()).timeInForeground = 0;
+                //初始化今日每个小时的运行时间和启动次数
+//                map.get(entry.getKey()).EachHourLaunchCounts = new int[25];
+//                map.get(entry.getKey()).EachHourLaunchCounts[NowHour()+1]=-1;
+                map.get(entry.getKey()).EachHourRunningTimes = new long[25];
+                map.get(entry.getKey()).EachHourRunningTimes[NowHour()+1] = 0;
+                if (totalEvents > 1) {
+                    for (int i = 0; i < totalEvents - 1; i++) {
+                        UsageEvents.Event E0 = entry.getValue().get(i);
+                        UsageEvents.Event E1 = entry.getValue().get(i + 1);
+
+//                        if (E1.getEventType() == 1 || E0.getEventType() == 1) {
+//                            map.get(E1.getPackageName()).launchCount++;
+//                        }
+                        if (E0.getEventType() == UsageEvents.Event.ACTIVITY_RESUMED) {
+                            map.get(E0.getPackageName()).launchCount++;
+                            map.get(E0.getPackageName()).EachHourLaunchCounts[Hour(E0.getTimeStamp())]++;
+                            //设置第一次运行时间
+                            if(firstrun){
+                                map.get(E0.getPackageName()).FirstRunningTime=E0.getTimeStamp();
+//                                Log.d("TAG", getApplicationNameByPackageName(context,entry.getKey())
+//                                        +"的第一次运行时间为："+LongToString_Time(E0.getTimeStamp())
+//                                );
+                                firstrun = false;
+                            }
+                            //设置最后一次运行时间
+                            map.get(E0.getPackageName()).LastRunningTime=E0.getTimeStamp();
+                            map.get(E0.getPackageName()).LastRuntime =(int) (map.get(E0.getPackageName()).LastRunningTime-Todayorigintime);
+                        }
+                        if(E0.getEventType() == UsageEvents.Event.ACTIVITY_PAUSED){
+                            map.get(E0.getPackageName()).LastBackTime=E0.getTimeStamp();
+                        }
+                        if (E0.getEventType() == 1 && E1.getEventType() == 2) {
+                            long diff = E1.getTimeStamp() - E0.getTimeStamp();
+                            int Foregroundtime = (int)diff+map.get(E0.getPackageName()).timeInForeground.intValue();
+                            map.get(E0.getPackageName()).timeInForeground =(int)Foregroundtime;
+                            //进入前台和进入后台在同一小时内
+                            if(Hour(E0.getTimeStamp())==Hour(E1.getTimeStamp())){
+                                map.get(E0.getPackageName()).EachHourRunningTimes[Hourany(E0.getTimeStamp())] +=diff;
+                            }else{
+                                //midhour 是 Hour(E1.getTimeStamp())，这点的long类型时间
+                                long midhour = SomeHour(Hour(E1.getTimeStamp()));
+                                map.get(E0.getPackageName()).EachHourRunningTimes[Hourany(E0.getTimeStamp())]+=(midhour-E0.getTimeStamp()) ;
+                                map.get(E0.getPackageName()).EachHourRunningTimes[Hourany(E1.getTimeStamp())]+= (E1.getTimeStamp()-midhour);
+                            }
+//                                map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E0.getTimeStamp())]+= diff/2;
+//                            }    map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E1.getTimeStamp())]+= diff/2;
+                        }
+                    }
+                    //统计该应用最后一个事件是否是进入前台，如果是，将启动次数加1
+                    if (entry.getValue().get(totalEvents-1).getEventType() == UsageEvents.Event.ACTIVITY_RESUMED) {
+                        map.get(entry.getValue().get(totalEvents-1).getPackageName()).launchCount++;
+                    }
+                }
+//                map.get(entry.getValue()).LastRuntime =(int) (map.get(entry.getValue()).LastRunningTime%86400000);
+
+                //关键！必须将firstrun重置，否则只能获取第一个应用的第一次启动时间
+                firstrun = true;
+                // 如果第一次事件是进入后台，则统计开始的时间戳---第一次事件的时间戳，这段时间也算是前台运行时间，需要统计到
+                if (entry.getValue().get(0).getEventType() == 2) {
+                    long diff = entry.getValue().get(0).getTimeStamp() - start_time;
+                    map.get(entry.getKey()).EachHourRunningTimes[Hourany(entry.getValue().get(0).getTimeStamp())] +=diff;
+                    int Foregroundtime1 = (int)diff+map.get(entry.getKey()).timeInForeground;
+                    map.get(entry.getKey()).timeInForeground =(int)Foregroundtime1;
+
+                }
+
+                // 如果最后一次事件是进入前台，则最后一次事件的时间戳---统计结束的时间戳，这段时间也算是前台运行时间，需要统计到
+                if (entry.getValue().get(totalEvents - 1).getEventType() == 1) {
+                    long diff = end_time - entry.getValue().get(totalEvents - 1).getTimeStamp();
+                    map.get(entry.getKey()).EachHourRunningTimes[Hourany(entry.getValue().get(totalEvents - 1).getTimeStamp())] +=diff;
+                    int Foregroundtime2 = (int)diff+map.get(entry.getKey()).timeInForeground;
+                    map.get(entry.getKey()).timeInForeground =(int)Foregroundtime2;
+                }
+            }
+            map = sortBytimeInForeground(map);
+            return map;
+        } else {
+            return null;
+        }
+
+    }
+
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    public HashMap<String, AppUsageInfo> getUsageStatistics11(long start_time, long end_time, Context context) {
+        UsageEvents.Event currentEvent;
+        //  List<UsageEvents.Event> allEvents = new ArrayList<>();
+        HashMap<String, AppUsageInfo> map = new HashMap<>();
+        HashMap<String, List<UsageEvents.Event>> sameEvents = new HashMap<>();
+
+        UsageStatsManager mUsageStatsManager = (UsageStatsManager)
+                context.getSystemService(Context.USAGE_STATS_SERVICE);
+        long Todayorigintime = getStartTime();
+        if (mUsageStatsManager != null) {
+            // Get all apps data from starting time to end time
+            UsageEvents usageEvents = mUsageStatsManager.queryEvents(start_time, end_time);
+
+            // 将事件集进行划分
+            while (usageEvents.hasNextEvent()) {
+                currentEvent = new UsageEvents.Event();
+                usageEvents.getNextEvent(currentEvent);
+                //ACTIVITY_RESUMED表示进入前台，ACTIVITY_PAUSED表示进入后台
+                if (currentEvent.getEventType() == UsageEvents.Event.ACTIVITY_RESUMED ||
+                        currentEvent.getEventType() == UsageEvents.Event.ACTIVITY_PAUSED) {
+                    //  allEvents.add(currentEvent);
+                    String key = currentEvent.getPackageName();
+                    //判断是否是系统应用程序
+                    if(!SystemAppfilter(key)){
+                        if (map.get(key) == null) {
+                            map.put(key, new AppUsageInfo(key));
+                            sameEvents.put(key,new ArrayList<UsageEvents.Event>());
+                        }
+                        sameEvents.get(key).add(currentEvent);
+                    }
+
+                }
+            }
+
+            // 对单个app的所有事件进行整理，统计相关信息
+            boolean firstrun=true;
+            for (Map.Entry<String,List<UsageEvents.Event>> entry : sameEvents.entrySet()) {
+                int totalEvents = entry.getValue().size();
+                //关键！必须先将其置0，否则后面会出现Null与数字相加，报错
+                map.get(entry.getKey()).timeInForeground = 0;
+                //初始化今日每个小时的运行时间和启动次数
+                map.get(entry.getKey()).EachHourLaunchCounts = new int[25];
+//                map.get(entry.getKey()).EachHourLaunchCounts[NowHour()+1]=-1;
+                if (totalEvents > 1) {
+                    for (int i = 0; i < totalEvents - 1; i++) {
+                        UsageEvents.Event E0 = entry.getValue().get(i);
+                        UsageEvents.Event E1 = entry.getValue().get(i + 1);
+
+                        if (E0.getEventType() == UsageEvents.Event.ACTIVITY_RESUMED) {
+                            map.get(E0.getPackageName()).launchCount++;
+                            map.get(E0.getPackageName()).EachHourLaunchCounts[Hourany(E0.getTimeStamp())]++;
+                            //设置第一次运行时间
+                            if(firstrun){
+                                map.get(E0.getPackageName()).FirstRunningTime=E0.getTimeStamp();
+//                                Log.d("TAG", getApplicationNameByPackageName(context,entry.getKey())
+//                                        +"的第一次运行时间为："+LongToString_Time(E0.getTimeStamp())
+//                                );
+                                firstrun = false;
+                            }
+                        }
+                        if(E0.getEventType() == UsageEvents.Event.ACTIVITY_PAUSED){
+                            map.get(E0.getPackageName()).LastBackTime=E0.getTimeStamp();
+                        }
+                        if (E0.getEventType() == 1 && E1.getEventType() == 2) {
+                            long diff = E1.getTimeStamp() - E0.getTimeStamp();
+                            int Foregroundtime = (int)diff+map.get(E0.getPackageName()).timeInForeground.intValue();
+                            map.get(E0.getPackageName()).timeInForeground =(int)Foregroundtime;
+
+//                                map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E0.getTimeStamp())]+= diff/2;
+//                            }    map.get(E0.getPackageName()).EachHourRunningTimes[Hour(E1.getTimeStamp())]+= diff/2;
+                        }
+                    }
+                    //统计该应用最后一个事件是否是进入前台，如果是，将启动次数加1
+                    if (entry.getValue().get(totalEvents-1).getEventType() == UsageEvents.Event.ACTIVITY_RESUMED) {
+                        map.get(entry.getValue().get(totalEvents-1).getPackageName()).launchCount++;
+                    }
+                }
+//                map.get(entry.getValue()).LastRuntime =(int) (map.get(entry.getValue()).LastRunningTime%86400000);
+
+                //关键！必须将firstrun重置，否则只能获取第一个应用的第一次启动时间
+                firstrun = true;
+
+            }
+            map = sortBytimeInForeground(map);
+            return map;
+        } else {
+            return null;
+        }
+
+    }
+
 
     /**
      * 将获取的app使用信息保存到数据库
@@ -256,12 +472,12 @@ public class GetData {
                 if (entry.getValue().timeInForegroundPercentage!=0.0){
                     TopApps.add(entry.getValue());
                 }
-                for (int i = 0; i <24 ; i++) {
-                    Log.d(entry.getValue().appName+"运行时间", i+"点:"+entry.getValue().EachHourRunningTimes[i]);
-                }
-                for (int i = 0; i <24 ; i++) {
-                    Log.d(entry.getValue().appName+"启动次数", i+"点:"+entry.getValue().EachHourLaunchCounts[i]);
-                }
+//                for (int i = 0; i <24 ; i++) {
+//                    Log.d(entry.getValue().appName+"运行时间", i+"点:"+entry.getValue().EachHourRunningTimes[i]);
+//                }
+//                for (int i = 0; i <24 ; i++) {
+//                    Log.d(entry.getValue().appName+"启动次数", i+"点:"+entry.getValue().EachHourLaunchCounts[i]);
+//                }
                 count++;
             }
         }
@@ -492,6 +708,17 @@ public class GetData {
         long di = time-todaytime;
         int d = (int)di;
         int hour = d/3600000;
+        return hour;
+    }
+    /**
+     * 将long类型的今日时间转换成具体多少点
+     * @param time
+     * @return
+     */
+    public int Hourany(long time){
+
+        long d = time%86400000;
+        int hour = (int)d/3600000;
         return hour;
     }
 

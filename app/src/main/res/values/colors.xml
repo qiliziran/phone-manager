@@ -15,6 +15,7 @@
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
     <color name="grey">#B6B6B6</color>
+    <color name="lightgrey">#eff6f7</color>
 
     <color name="myred">#eb4f38</color>
     <color name="darkgray">#cccc</color>

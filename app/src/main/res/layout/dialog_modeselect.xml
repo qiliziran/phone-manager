@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="60dp"
+    android:clickable="true"
+    android:background="@drawable/search_background"
+    android:orientation="vertical">
+        <TextView
+            android:id="@+id/positiveTextView"
+            style="@style/text_15_ffffff_sdw"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@drawable/background_mode_up"
+            android:gravity="center"
+            android:text="确定" />
+        <TextView
+            android:id="@+id/negativeTextView"
+            style="@style/text_15_666666_sdw"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="取消" />
+</LinearLayout>

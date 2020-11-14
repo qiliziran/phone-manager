@@ -1,9 +1,11 @@
 package com.example.PhoneManager;
 //import com.android.setting.fuelaguge.BatteryStatsHelper
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -20,6 +22,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -30,12 +33,14 @@ import org.litepal.LitePal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import pl.com.salsoft.sqlitestudioremote.SQLiteStudioService;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,9 +71,106 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
         //获取应用详细使用记录
-        long hour_in_mil = 1000*60*60; // In Milliseconds
-        long end_time = System.currentTimeMillis();
-        long start_time = getStartTime();
+//        GetData appdata = new GetData(MainActivity.this);
+//        long hour_in_mil = 1000*60*60; // In Milliseconds
+//        long end_time = System.currentTimeMillis();
+//        long start_time = getStartTime();
+//        HashMap<String, AppUsageInfo> datas = appdata.getUsageStatistics11(start_time,end_time,this);
+//        System.out.println("今日app启动次数情况：");
+//        for (Map.Entry<String, AppUsageInfo> entry : datas.entrySet()) {
+//            System.out.print("app名称："+getApplicationNameByPackageName(this,entry.getKey())+":");
+//            for (int i = 0; i < entry.getValue().getEachHourLaunchCounts().length; i++) {
+//                System.out.print(entry.getValue().EachHourLaunchCounts[i]+" ");
+//            }
+//            System.out.println("");
+//        }
+//        System.out.println("");
+//        System.out.println("");
+//        System.out.println("");
+//         end_time = start_time;
+//        start_time = start_time-86400000;
+//        HashMap<String, AppUsageInfo> datas1 = appdata.getUsageStatistics11(start_time,end_time,this);
+//        System.out.println("昨日app启动次数情况：");
+//        for (Map.Entry<String, AppUsageInfo> entry : datas1.entrySet()) {
+//            System.out.print("app名称："+getApplicationNameByPackageName(this,entry.getKey())+":");
+//            for (int i = 0; i < entry.getValue().getEachHourLaunchCounts().length; i++) {
+//                System.out.print(entry.getValue().EachHourLaunchCounts[i]+" ");
+//            }
+//            System.out.println("");
+//        }
+//        System.out.println("");
+//        System.out.println("");
+//        System.out.println("");
+//        end_time = start_time;
+//        start_time = start_time-86400000;
+//        HashMap<String, AppUsageInfo> datas2 = appdata.getUsageStatistics11(start_time,end_time,this);
+//        System.out.println("前日app启动次数情况：");
+//        for (Map.Entry<String, AppUsageInfo> entry : datas2.entrySet()) {
+//            System.out.print("app名称："+getApplicationNameByPackageName(this,entry.getKey())+":");
+//            for (int i = 0; i < entry.getValue().getEachHourLaunchCounts().length; i++) {
+//                System.out.print(entry.getValue().EachHourLaunchCounts[i]+" ");
+//            }
+//            System.out.println("");
+//        }
+//        System.out.println("");
+//        System.out.println("");
+//        System.out.println("");
+//        end_time = start_time;
+//        start_time = start_time-86400000;
+//        HashMap<String, AppUsageInfo> datas3 = appdata.getUsageStatistics11(start_time,end_time,this);
+//        System.out.println("大前日app启动次数情况：");
+//        for (Map.Entry<String, AppUsageInfo> entry : datas3.entrySet()) {
+//            System.out.print("app名称："+getApplicationNameByPackageName(this,entry.getKey())+":");
+//            for (int i = 0; i < entry.getValue().getEachHourLaunchCounts().length; i++) {
+//                System.out.print(entry.getValue().EachHourLaunchCounts[i]+" ");
+//            }
+//            System.out.println("");
+//        }
+//        System.out.println("");
+//        System.out.println("");
+//        System.out.println("");
+//        end_time = start_time;
+//        start_time = start_time-86400000;
+//        HashMap<String, AppUsageInfo> datas4 = appdata.getUsageStatistics11(start_time,end_time,this);
+//        System.out.println("大大前日app启动次数情况：");
+//        for (Map.Entry<String, AppUsageInfo> entry : datas4.entrySet()) {
+//            System.out.print("app名称："+getApplicationNameByPackageName(this,entry.getKey())+":");
+//            for (int i = 0; i < entry.getValue().getEachHourLaunchCounts().length; i++) {
+//                System.out.print(entry.getValue().EachHourLaunchCounts[i]+" ");
+//            }
+//            System.out.println("");
+//        }
+//        System.out.println("");
+//        System.out.println("");
+//        System.out.println("");
+//        end_time = start_time;
+//        start_time = start_time-86400000;
+//        HashMap<String, AppUsageInfo> datas5 = appdata.getUsageStatistics11(start_time,end_time,this);
+//        System.out.println("大大大前日app启动次数情况：");
+//        for (Map.Entry<String, AppUsageInfo> entry : datas5.entrySet()) {
+//            System.out.print("app名称："+getApplicationNameByPackageName(this,entry.getKey())+":");
+//            for (int i = 0; i < entry.getValue().getEachHourLaunchCounts().length; i++) {
+//                System.out.print(entry.getValue().EachHourLaunchCounts[i]+" ");
+//            }
+//            System.out.println("");
+//        }
+//        System.out.println("");
+//        System.out.println("");
+//        System.out.println("");
+//        end_time = start_time;
+//        start_time = start_time-86400000;
+//        HashMap<String, AppUsageInfo> datas6 = appdata.getUsageStatistics11(start_time,end_time,this);
+//        System.out.println("大大大大前日app启动次数情况：");
+//        for (Map.Entry<String, AppUsageInfo> entry : datas6.entrySet()) {
+//            System.out.print("app名称："+getApplicationNameByPackageName(this,entry.getKey())+":");
+//            for (int i = 0; i < entry.getValue().getEachHourLaunchCounts().length; i++) {
+//                System.out.print(entry.getValue().EachHourLaunchCounts[i]+" ");
+//            }
+//            System.out.println("");
+//        }
+
+
+
 
 //        Log.d(TAG, "起始时间："+LongToString_Time(start_time)+"\t"+"结束时间："+LongToString_Time(end_time));
         //版本一
@@ -110,6 +212,17 @@ public class MainActivity extends AppCompatActivity {
         todayStart.set(Calendar.SECOND, 0);
         todayStart.set(Calendar.MILLISECOND, 0);
         return todayStart.getTime().getTime();
+    }
+    public static String getApplicationNameByPackageName(Context context, String packageName) {
+
+        PackageManager pm = context.getPackageManager();
+        String Name ;
+        try {
+            Name=pm.getApplicationLabel(pm.getApplicationInfo(packageName,PackageManager.GET_META_DATA)).toString();
+        } catch (PackageManager.NameNotFoundException e) {
+            Name = "" ;
+        }
+        return Name;
     }
 
 }

@@ -1,0 +1,31 @@
+<LinearLayout
+    android:layout_width="110dp"
+    android:layout_height="120dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_centerInParent="true"
+    android:background="@drawable/background_mode"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+        <Button
+            android:id="@+id/positive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/background_mode_up"
+            android:gravity="center"
+            android:singleLine="true"
+            tools:text="Yes"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+        <Button
+            android:id="@+id/negtive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:gravity="center"
+            android:singleLine="true"
+            tools:text="No"
+            android:textColor="#999999"
+            android:textSize="16sp" />
+</LinearLayout>

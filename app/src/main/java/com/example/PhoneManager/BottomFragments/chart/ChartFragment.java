@@ -36,7 +36,8 @@ public class ChartFragment extends Fragment {
     private ChartViewModel chartViewModel;
     private ViewPager viewPager;
     private List<Fragment> mFragmentList = new ArrayList<>() ;
-
+    //下方两个fragment的标签
+    private List<String> tagLists;
     // 当前页编号
     private int currIndex = 0;
 
@@ -50,20 +51,11 @@ public class ChartFragment extends Fragment {
         MainUseFragment fragment2 = new MainUseFragment();
         mFragmentList.add(fragment1);
         mFragmentList.add(fragment2);
-
+        FragmentPagerAdapter mAdapter = new TabFragmentPagerAdapter(getChildFragmentManager(), mFragmentList);
         viewPager = (ViewPager) root.findViewById(R.id.viewPager);
         //绑定适配器
-        viewPager.setAdapter(new FragmentStatePagerAdapter(getFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                return mFragmentList.get(position);
-            }
+        viewPager.setAdapter(mAdapter);
 
-            @Override
-            public int getCount() {
-                return mFragmentList.size();
-            }
-        });
         //设置viewPager的初始界面为第一个界面
         viewPager.setCurrentItem(0);
         //添加切换界面的监听器
@@ -74,11 +66,34 @@ public class ChartFragment extends Fragment {
         tabLayout.setupWithViewPager(viewPager);
         //一定要在上面的setupWithViewPager设置完，再设置tab的文字，否则setupWithViewPager会清空tab标题！
         TabLayout.Tab tab0 = tabLayout.getTabAt(0);
-        tab0.setText("tab0");
+        tab0.setText("历史记录");
         TabLayout.Tab tab1 = tabLayout.getTabAt(1);
-        tab1.setText("tab1");
+        tab1.setText("综合情况");
         return root;
     }
+
+    public static String makeFragmentName(int viewId, int index) {
+        return "android:switcher:" + viewId + ":" + index;
+    }
+
+//    public void update(int item) {
+//        Fragment fragment = getFragmentManager().findFragmentByTag(tagLists.get(item));
+//        if (fragment != null) {
+//            switch (item) {
+//                case 0:
+//                    ((HistoryRecordFragment) fragment).query();
+//                    break;
+//                case 1:
+//                    ((FragmentB) fragment).query();
+//                    break;
+//                case 2:
+//                    ((FragmentC) fragment).query();
+//                    break;
+//                case 3:
+//                    break;
+//            }
+//        }
+//    }
 
     public class MyOnPageChangeListener implements ViewPager.OnPageChangeListener {
 
@@ -93,10 +108,8 @@ public class ChartFragment extends Fragment {
                      * float fromYDelta 动画开始的点离当前View Y坐标上的差值
                      * float toYDelta 动画开始的点离当前View Y坐标上的差值
                      **/
-
                     break;
                 case 1:
-
                     break;
             }
             //arg0为切换到的页的编码

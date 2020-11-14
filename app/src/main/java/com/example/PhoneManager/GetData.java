@@ -72,7 +72,7 @@ public class GetData {
             // Get all apps data from starting time to end time
             UsageEvents usageEvents = mUsageStatsManager.queryEvents(start_time, end_time);
 
-            // Put these data into the map
+            // 将事件集进行划分
             while (usageEvents.hasNextEvent()) {
                 currentEvent = new UsageEvents.Event();
                 usageEvents.getNextEvent(currentEvent);

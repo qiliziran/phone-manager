@@ -6,15 +6,15 @@ import android.graphics.drawable.Drawable;
 import java.util.List;
 
 public  class AppUsageInfo {
-    Bitmap appIcon; // You may add get this usage data also, if you wish.
-    String appName, packageName;
-    Integer timeInForeground;
-    float timeInForegroundPercentage;
-    Integer LastRuntime;
-    int launchCount;
-    long FirstRunningTime,LastRunningTime,LastBackTime;
-    long[] EachHourRunningTimes;
-    int[] EachHourLaunchCounts;
+        Bitmap appIcon; // You may add get this usage data also, if you wish.
+        String appName, packageName;
+        Integer timeInForeground;
+        float timeInForegroundPercentage;
+        Integer LastRuntime;
+        int launchCount;
+        long FirstRunningTime,LastRunningTime,LastBackTime;
+        long[] EachHourRunningTimes;
+        int[] EachHourLaunchCounts;
     //以包名为形参的构造函数
     AppUsageInfo(String pName) {
         this.packageName=pName;

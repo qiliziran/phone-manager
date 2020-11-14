@@ -150,7 +150,8 @@ public class HomeFragment extends Fragment implements SearchView.SearchViewListe
 //        UsingRecordAdapter adapter = new UsingRecordAdapter(getActivity(), R.layout.app_using_item, lastestappList);
 //        listView.setAdapter(adapter);
 
-        initData();
+        //初始化搜索框中的数据！
+//        initData();
         initViews(root);
         todayusetext = root.findViewById(R.id.todayusetext);
         lastestuse = root.findViewById(R.id.lastestuse);

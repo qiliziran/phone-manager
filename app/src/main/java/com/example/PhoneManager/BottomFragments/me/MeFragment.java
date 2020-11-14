@@ -30,6 +30,7 @@ import com.example.PhoneManager.ApplicationListActivity;
 import com.example.PhoneManager.Login_Register.LoginActivity;
 import com.example.PhoneManager.Login_Register.RegisterActivity;
 import com.example.PhoneManager.MainActivity;
+import com.example.PhoneManager.Prediction;
 import com.example.PhoneManager.R;
 
 import org.w3c.dom.Text;
@@ -92,6 +93,7 @@ public class MeFragment extends Fragment {
         OnClick onClick = new OnClick();
         meTextView3.setOnClickListener(onClick);
         meTextView2.setOnClickListener(onClick);
+        meTextView1.setOnClickListener(onClick);
     }
     private class OnClick implements View.OnClickListener {
         @Override
@@ -108,6 +110,13 @@ public class MeFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), ApplicationListActivity.class);//this前面为当前activty名称，class前面为要跳转到得activity名称
                     startActivity(intent);
                     break;
+                case R.id.tv_me_tv1:
+                    Log.e("liu", "成功1");
+                    Prediction prediction = new Prediction();
+                    String[] categories = {"y", "y", "n"};
+                    String[] features = {"0", "1", "2"};
+                    prediction.main(categories, features);
+                    Log.e("liu", "成功2");
             }
         }
     }

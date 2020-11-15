@@ -717,7 +717,7 @@ public class GetData {
      */
     public int Hourany(long time){
 
-        long d = time%86400000;
+        long d = (time-16*60*60*1000)%86400000;
         int hour = (int)d/3600000;
         return hour;
     }

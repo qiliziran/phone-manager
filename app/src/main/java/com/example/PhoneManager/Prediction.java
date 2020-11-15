@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,13 +34,12 @@ public class Prediction {
         HashMap<String, AppUsageInfo> datas = appdata.getUsageStatistics11(start_time,end_time,context);
         for (Map.Entry<String, AppUsageInfo> entry : datas.entrySet()) {
             String appName = getApplicationNameByPackageName(context, entry.getKey());
-            Log.e("liu", appName);
             appNames.add(appName);
-            Log.e("liu", "添加APP：" + appName + " 长度：" + entry.getValue().getEachHourLaunchCounts().length);
+            Log.e("liu", "添加APP：" + appName);
 //            Log.e("liu", "长度 " + appNames.get(i));
 //            Log.e("liu", (Arrays.toString(appLaunchCounts.get(i))));
-            int[] appLaunchCount = new int[25];
-            for (int i = 0; i < entry.getValue().getEachHourLaunchCounts().length; i++) {
+            int[] appLaunchCount = new int[24];
+            for (int i = 0; i < entry.getValue().getEachHourLaunchCounts().length - 1; i++) {
                 appLaunchCount[i] = entry.getValue().EachHourLaunchCounts[i];
             }
             Log.e("liu", Arrays.toString(appLaunchCount));
@@ -51,7 +51,34 @@ public class Prediction {
         for (int i = 0; i < appNames.size(); i++) {
             String[] features = new String[24];
             String[] categories = new String[24];
+            for (int j = 0; j < 24; j++) {
+                features[j] = String.valueOf(j);
+                if (appLaunchCounts.get(i)[j] > 0) {
+                    categories[j] = "y";
+                }
+                else {
+                    categories[j] = "n";
+                }
+            }
+            Log.e("liu", Arrays.toString(categories));
+            for (int j = 0; j < 24; j++) {
+                bayes.learn(categories[j], Arrays.asList(features[j]));
+            }
+        }
 
+//        预测
+        final Calendar c = Calendar.getInstance();
+        int hour = c.get(Calendar.HOUR);
+        Log.e("liu", "当前小时：" + hour);
+        for (int i = 0; i < appNames.size(); i++) {
+            String result = bayes.classify(Arrays.asList(String.valueOf(hour))).getCategory();
+            // will output "positive"
+            if (result == "y") {
+                Log.e("liu", appNames.get(i) + " 命中");
+            }
+            else {
+                Log.e("liu", appNames.get(i) + " 未命中");
+            }
         }
     }
 

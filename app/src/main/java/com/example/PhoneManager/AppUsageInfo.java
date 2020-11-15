@@ -14,7 +14,7 @@ public  class AppUsageInfo {
         int launchCount;
         long FirstRunningTime,LastRunningTime,LastBackTime;
         long[] EachHourRunningTimes;
-        int[] EachHourLaunchCounts;
+        public int[] EachHourLaunchCounts;
     //以包名为形参的构造函数
     AppUsageInfo(String pName) {
         this.packageName=pName;

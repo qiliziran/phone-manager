@@ -26,7 +26,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.PhoneManager.AppUsageInfo;
 import com.example.PhoneManager.ApplicationListActivity;
+import com.example.PhoneManager.GetData;
 import com.example.PhoneManager.Login_Register.LoginActivity;
 import com.example.PhoneManager.Login_Register.RegisterActivity;
 import com.example.PhoneManager.MainActivity;
@@ -38,9 +40,12 @@ import org.w3c.dom.Text;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.content.Context.MODE_PRIVATE;
+import static com.example.PhoneManager.MainActivity.getApplicationNameByPackageName;
 
 public class MeFragment extends Fragment {
 
@@ -111,12 +116,12 @@ public class MeFragment extends Fragment {
                     startActivity(intent);
                     break;
                 case R.id.tv_me_tv1:
-                    Log.e("liu", "成功1");
+                    Log.e("liu", "开始");
+
+
                     Prediction prediction = new Prediction();
-                    String[] categories = {"y", "y", "n"};
-                    String[] features = {"0", "1", "2"};
-                    prediction.main(categories, features);
-                    Log.e("liu", "成功2");
+                    prediction.prediction(getActivity());
+                    Log.e("liu", "结束");
             }
         }
     }

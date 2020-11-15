@@ -116,12 +116,12 @@ public class MeFragment extends Fragment {
                     startActivity(intent);
                     break;
                 case R.id.tv_me_tv1:
-                    Log.e("liu", "开始");
+                    Log.e("liu", "预测开始");
 
 
                     Prediction prediction = new Prediction();
                     prediction.prediction(getActivity());
-                    Log.e("liu", "结束");
+                    Log.e("liu", "预测结束");
             }
         }
     }

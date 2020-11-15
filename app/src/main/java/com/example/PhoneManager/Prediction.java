@@ -2,6 +2,7 @@ package com.example.PhoneManager;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,13 +29,25 @@ public class Prediction {
         long start_time = appdata.getStartTime() - 86400000;
         long end_time = appdata.getStartTime();
 
-        List<String> appNames = new ArrayList();
-        List<int[]> appLaunchCounts = new ArrayList();
+        List<String> appNames1 = new ArrayList();
+        List<int[]> appLaunchCounts1 = new ArrayList();
+        List<String> appNames2 = new ArrayList();
+        List<int[]> appLaunchCounts2 = new ArrayList();
+        List<String> appNames3 = new ArrayList();
+        List<int[]> appLaunchCounts3 = new ArrayList();
+        List<String> appNames4 = new ArrayList();
+        List<int[]> appLaunchCounts4 = new ArrayList();
+        List<String> appNames5 = new ArrayList();
+        List<int[]> appLaunchCounts5 = new ArrayList();
+        HashMap<String, AppUsageInfo> datas1 = appdata.getUsageStatistics11(start_time,end_time,context);
+        HashMap<String, AppUsageInfo> datas2 = appdata.getUsageStatistics11(start_time-1*24*60*60*1000,end_time-1*24*60*60*1000,context);
+        HashMap<String, AppUsageInfo> datas3 = appdata.getUsageStatistics11(start_time-2*24*60*60*1000,end_time-2*24*60*60*1000,context);
+        HashMap<String, AppUsageInfo> datas4 = appdata.getUsageStatistics11(start_time-3*24*60*60*1000,end_time-3*24*60*60*1000,context);
+        HashMap<String, AppUsageInfo> datas5 = appdata.getUsageStatistics11(start_time-4*24*60*60*1000,end_time-4*24*60*60*1000,context);
 
-        HashMap<String, AppUsageInfo> datas = appdata.getUsageStatistics11(start_time,end_time,context);
-        for (Map.Entry<String, AppUsageInfo> entry : datas.entrySet()) {
+        for (Map.Entry<String, AppUsageInfo> entry : datas1.entrySet()) {
             String appName = getApplicationNameByPackageName(context, entry.getKey());
-            appNames.add(appName);
+            appNames1.add(appName);
             Log.e("liu", "添加APP：" + appName);
 //            Log.e("liu", "长度 " + appNames.get(i));
 //            Log.e("liu", (Arrays.toString(appLaunchCounts.get(i))));
@@ -43,17 +56,64 @@ public class Prediction {
                 appLaunchCount[i] = entry.getValue().EachHourLaunchCounts[i];
             }
             Log.e("liu", Arrays.toString(appLaunchCount));
-            appLaunchCounts.add(appLaunchCount);
+            appLaunchCounts1.add(appLaunchCount);
+        }
+
+        for (Map.Entry<String, AppUsageInfo> entry : datas2.entrySet()) {
+            String appName = getApplicationNameByPackageName(context, entry.getKey());
+            appNames2.add(appName);
+            int[] appLaunchCount = new int[24];
+            for (int i = 0; i < entry.getValue().getEachHourLaunchCounts().length - 1; i++) {
+                appLaunchCount[i] = entry.getValue().EachHourLaunchCounts[i];
+            }
+            appLaunchCounts2.add(appLaunchCount);
+        }
+
+        for (Map.Entry<String, AppUsageInfo> entry : datas3.entrySet()) {
+            String appName = getApplicationNameByPackageName(context, entry.getKey());
+            appNames3.add(appName);
+            int[] appLaunchCount = new int[24];
+            for (int i = 0; i < entry.getValue().getEachHourLaunchCounts().length - 1; i++) {
+                appLaunchCount[i] = entry.getValue().EachHourLaunchCounts[i];
+            }
+            appLaunchCounts3.add(appLaunchCount);
+        }
+
+        for (Map.Entry<String, AppUsageInfo> entry : datas4.entrySet()) {
+            String appName = getApplicationNameByPackageName(context, entry.getKey());
+            appNames4.add(appName);
+            int[] appLaunchCount = new int[24];
+            for (int i = 0; i < entry.getValue().getEachHourLaunchCounts().length - 1; i++) {
+                appLaunchCount[i] = entry.getValue().EachHourLaunchCounts[i];
+            }
+            appLaunchCounts4.add(appLaunchCount);
+        }
+
+        for (Map.Entry<String, AppUsageInfo> entry : datas5.entrySet()) {
+            String appName = getApplicationNameByPackageName(context, entry.getKey());
+            appNames5.add(appName);
+            int[] appLaunchCount = new int[24];
+            for (int i = 0; i < entry.getValue().getEachHourLaunchCounts().length - 1; i++) {
+                appLaunchCount[i] = entry.getValue().EachHourLaunchCounts[i];
+            }
+            appLaunchCounts5.add(appLaunchCount);
         }
 
 //        训练
-        Classifier<String, String> bayes = new BayesClassifier<String, String>();
-        for (int i = 0; i < appNames.size(); i++) {
+        int appCount = appNames1.size();
+        Log.e("liu", "APP数量" + appCount);
+        List<Classifier<String, String>> bayesList = new ArrayList();
+        for (int i = 0; i < appCount; i++) {
+            Classifier<String, String> bayes = new BayesClassifier<String, String>();
+            bayesList.add(bayes);
+        }
+
+        for (int i = 0; i < appCount; i++) {
             String[] features = new String[24];
             String[] categories = new String[24];
             for (int j = 0; j < 24; j++) {
                 features[j] = String.valueOf(j);
-                if (appLaunchCounts.get(i)[j] > 0) {
+                if (appLaunchCounts1.get(i)[j] > 0) {
                     categories[j] = "y";
                 }
                 else {
@@ -62,22 +122,109 @@ public class Prediction {
             }
             Log.e("liu", Arrays.toString(categories));
             for (int j = 0; j < 24; j++) {
-                bayes.learn(categories[j], Arrays.asList(features[j]));
+                bayesList.get(i).learn(categories[j], Arrays.asList(features[j]));
             }
         }
 
+        for (int i = 0; i < appCount; i++) {
+            String[] features = new String[24];
+            String[] categories = new String[24];
+            for (int j = 0; j < 24; j++) {
+                features[j] = String.valueOf(j);
+                if (appLaunchCounts2.get(i)[j] > 0) {
+                    categories[j] = "y";
+                }
+                else {
+                    categories[j] = "n";
+                }
+            }
+            Log.e("liu", Arrays.toString(categories));
+            for (int j = 0; j < 24; j++) {
+                bayesList.get(i).learn(categories[j], Arrays.asList(features[j]));
+            }
+        }
+
+        for (int i = 0; i < appCount; i++) {
+            String[] features = new String[24];
+            String[] categories = new String[24];
+            for (int j = 0; j < 24; j++) {
+                features[j] = String.valueOf(j);
+                if (appLaunchCounts3.get(i)[j] > 0) {
+                    categories[j] = "y";
+                }
+                else {
+                    categories[j] = "n";
+                }
+            }
+            Log.e("liu", Arrays.toString(categories));
+            for (int j = 0; j < 24; j++) {
+                bayesList.get(i).learn(categories[j], Arrays.asList(features[j]));
+            }
+        }
+
+        for (int i = 0; i < appCount; i++) {
+            String[] features = new String[24];
+            String[] categories = new String[24];
+            for (int j = 0; j < 24; j++) {
+                features[j] = String.valueOf(j);
+                if (appLaunchCounts4.get(i)[j] > 0) {
+                    categories[j] = "y";
+                }
+                else {
+                    categories[j] = "n";
+                }
+            }
+            Log.e("liu", Arrays.toString(categories));
+            for (int j = 0; j < 24; j++) {
+                bayesList.get(i).learn(categories[j], Arrays.asList(features[j]));
+            }
+        }
+
+        for (int i = 0; i < appCount; i++) {
+            String[] features = new String[24];
+            String[] categories = new String[24];
+            for (int j = 0; j < 24; j++) {
+                features[j] = String.valueOf(j);
+                if (appLaunchCounts5.get(i)[j] > 0) {
+                    categories[j] = "y";
+                }
+                else {
+                    categories[j] = "n";
+                }
+            }
+            Log.e("liu", Arrays.toString(categories));
+            for (int j = 0; j < 24; j++) {
+                bayesList.get(i).learn(categories[j], Arrays.asList(features[j]));
+            }
+        }
+        Log.e("liu", "tag1");
+
+
+
 //        预测
+        List<String> hitApp = new ArrayList();
         final Calendar c = Calendar.getInstance();
-        int hour = c.get(Calendar.HOUR);
+        int hour = c.get(Calendar.HOUR_OF_DAY);
         Log.e("liu", "当前小时：" + hour);
-        for (int i = 0; i < appNames.size(); i++) {
-            String result = bayes.classify(Arrays.asList(String.valueOf(hour))).getCategory();
+        for (int i = 0; i < appNames1.size(); i++) {
+            String result = bayesList.get(i).classify(Arrays.asList(String.valueOf(hour))).getCategory();
             // will output "positive"
             if (result == "y") {
-                Log.e("liu", appNames.get(i) + " 命中");
+                Log.e("liu", appNames1.get(i) + " 命中");
+                hitApp.add(appNames1.get(i));
             }
             else {
-                Log.e("liu", appNames.get(i) + " 未命中");
+                Log.e("liu", appNames1.get(i) + " 未命中");
+            }
+        }
+
+        // 输出
+        if (hitApp.size() == 0) {
+            Log.e("liu", "预测APP个数为0");
+        }
+        else {
+            for (String appName : hitApp) {
+                Log.e("liu", "预测：" + appName);
             }
         }
     }
